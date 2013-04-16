@@ -36,8 +36,6 @@ if (!$auth->check_session()) {
     exit();
 } else {
 
-$request = json_decode(file_get_contents($beacon_conf_path));
-
 ?>
 
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">

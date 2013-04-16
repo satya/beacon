@@ -23,6 +23,7 @@ dist:
 install:
 	@mkdir -p $(installdir)/beacon $(httpdconfd)
 	@cp -rp beacon php $(installdir)/beacon/
+	@cp -rp $(installdir)/beacon/php/example.settings.php $(installdir)/beacon/php/settings.php
 	@find $(installdir)/beacon -type f -exec chmod o=r {} \;
 	@find $(installdir)/beacon -type d -exec chmod o=rx {} \;
 	@cp -p httpd-beacon.conf $(httpdconfd)/httpd-beacon.conf

@@ -263,6 +263,8 @@ class BeaconMySQL implements BeaconStorage
 
     public function validate_user($username, $password)
     {
+        $password = md5($password);
+      
         $username = stripslashes($username);
         $password = stripslashes($password);
         $username = mysql_real_escape_string($username);

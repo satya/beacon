@@ -20,8 +20,8 @@ class BeaconAuth
 
     function check_session()
     {
-        if(!empty($_SESSION['auth_username']) && !empty($_SESSION['auth_password'])) {
-            return $this->check($_SESSION['auth_username'], $_SESSION['auth_password']);
+        if(!empty($_SESSION['auth_username'])) {
+            return true;
         } else {
             return false;
         }
@@ -33,14 +33,14 @@ class BeaconAuth
 
         if($user)
         {
-            if($user['password'] == $password)
+            if(array_key_exists('email',$user) && isset($user['email']) && !empty($user['email']))
             {
                 $this->user_id = $user['uid'];
                 $this->username = $username;
                 $this->ok = true;
 
                 $_SESSION['auth_username'] = $username;
-                $_SESSION['auth_password'] = $password;
+                //$_SESSION['auth_password'] = $password;
                 session_write_close();
 
                 return true;
@@ -55,7 +55,7 @@ class BeaconAuth
 
         if($user)
         {
-            if($user['password'] == $password)
+            if(array_key_exists('email',$user) && isset($user['email']) && !empty($user['email']))
             {
                 $this->user_id = $user['uid'];
                 $this->username = $username;

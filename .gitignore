@@ -3,3 +3,4 @@
 *.egg*
 *.swp
 *~
+beacon/beacon.conf

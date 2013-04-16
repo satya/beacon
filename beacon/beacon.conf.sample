@@ -1,16 +1,15 @@
-/*
- * Beacon Config Sample File
- *
- * This file serves as a documentation of all configs.
- * Since valid JSON cannot contain comments do not use this
- * file as a proper conf file.
- *
- * This is the center of all Beacon customization.
- * As you can see it uses JSON for all settings.
- * Do not add any plugin settings here.
- * Use your own plugin.conf instead.
- *
- */
+//
+// Beacon Config Sample File
+//
+// This file serves as a documentation of all configs.
+// Since valid JSON cannot contain comments do not use this
+// file as a proper conf file.
+//
+// This is the center of all Beacon customization.
+// As you can see it uses JSON for all settings.
+// Do not add any plugin settings here.
+// Use your own plugin.conf instead.
+
 
 {
     // Complete URL of your Beacon installation
@@ -26,31 +25,71 @@
         // Provide all paths relative to the 'url'
 
         // The one that handles all of the AJAX requests
-        "handler": "index.php",
+        "handler": "php/ajax.php",
 
         // Path to php scripts
         "path": "php/",
 
         // Path to all javascript
-        "scriptpath": "js/",
+        "scriptpath": "beacon/js/",
 
         // Path to CSS
-        "csspath": "css/",
+        "csspath": "beacon/css/",
 
         // Path to all images
-        "imagepath": "img/",
+        "imagepath": "beacon/img/",
 
         // Path to all plugins
-        "pluginpath": "plugins/",
+        "pluginpath": "beacon/plugins/",
 
         // Path to store temporary files
         "tmppath": "php/storage/tmp/",
 
         // Path to i18n
-        "i18npath": "i18n/",
+        "i18npath": "beacon/i18n/",
 
         // Path to all HTML
-        "htmlpath" : "html/"
+        "htmlpath" : "beacon/html/",
+
+        // Choose what DB engine is to be used
+        "dbtype": "mysql",
+
+        // MySQL specific settings
+        "mysql": {
+        
+          //replace with your database location
+          "hostname": "localhost",
+          
+          //replace with your database name
+          "database": "beacon",
+          
+          //replace with your database username
+          "username": "beacon",
+          
+          //replace with your database password
+          "password": "beacon"
+          
+        },
+
+        // LDAP specific settings
+        "ldap": {
+          "account_suffix": "@example.com",
+          "base_dn": "DC=example,DC=com",
+          "domain_controllers": [
+            "dc1.example.com",
+            "dc2.example.com"
+          ],
+          "admin_username": "ldapusername",
+          "admin_password": "ldappassword",
+          // for optimization
+          "real_primarygroup": false, 
+          "use_ssl": "",
+          "use_tls": "",
+          "recursive_groups": "",
+          "ad_port": "389",
+          "sso": ""
+        }
+
 
     },
 
@@ -65,7 +104,11 @@
 
 
     // List the plugins here that are to be loaded
-    "plugins": ["guidexml"],
+    "plugins": [
+        "docbook",
+        "guidexml"
+    ],
+
 
     // Language to show
     "language": "en_US",

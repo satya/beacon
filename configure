@@ -1,0 +1,4 @@
+#!/bin/bash
+cd beacon
+sed -e '/^\/\//d' -e '/ \/\//d' -e '/^$/d' beacon.conf.sample > beacon.conf
+

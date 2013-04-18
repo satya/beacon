@@ -30,11 +30,10 @@ if ($beacon_runnable < 0) {
     exit();
 }
 
-$ldap = new BeaconLDAP($beacon_ldap_configuration);
-
-if($request->authtype==='ldap'){
+if($request->php->authtype==='ldap'){
+  $ldap = new BeaconLDAP($beacon_ldap_configuration);
   $auth = new BeaconAuth($ldap);
-}elseif($request->authtype==='db'){
+}elseif($request->php->authtype==='db'){
   $auth = new BeaconAuth($beacon_db_instance);
 }
 

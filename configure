@@ -1,4 +1,173 @@
 #!/bin/bash
+TMP=/tmp/tmpfile
+
+
 cd beacon
 sed -e '/^\/\//d' -e '/ \/\//d' -e '/^$/d' beacon.conf.sample > beacon.conf
+
+# next step is to update beacon.conf from user input
+# see http://stackoverflow.com/questions/15272244/how-to-replace-value-of-key-in-json-file-using-sed 
+
+# fields to fill from user input:  text (default)
+# domain for URL (localhost)
+read -p "Domain for URL: " -e -i "localhost" domain
+echo $domain
+sed 's/"url": "http:\/\/localhost\//"url": "http:\/\/'${domain}'\//' beacon.conf > $TMP
+cat $TMP > beacon.conf
+
+# backend (php)
+read -p "Backend: " -e -i "php" backend
+echo $backend
+sed 's/"backend": "php"/"backend": "'${backend}'"/' beacon.conf > $TMP
+cat $TMP > beacon.conf
+
+
+# path for URL (beacon)  -- requires updates to beacon.conf as well as httpd file
+read -p "Path for URL (example: http://${domain}/beacon/: " -e -i "beacon" urlpath
+echo $urlpath
+# update paths
+sed 's/path": "beacon\//path": "'${urlpath}'\//' beacon.conf > $TMP
+cat $TMP > beacon.conf
+sed 's/"url": "http:\/\/'${domain}'\/beacon\//"url": "http:\/\/'${domain}'\/'${urlpath}'\//' beacon.conf > $TMP
+cat $TMP > beacon.conf
+# update apache conf file
+
+# dbtype (mysql)
+read -p "Database type: " -e -i "mysql" dbtype
+echo $dbtype
+sed 's/"dbtype": "mysql"/"dbtype": "'${dbtype}'"/' beacon.conf > $TMP
+cat $TMP > beacon.conf
+
+# db hostname (localhost)
+read -p "Database hostname: " -e -i "localhost" dbhostname
+echo $dbhostname
+sed 's/"hostname": "localhost"/"hostname": "'${dbhostname}'"/' beacon.conf > $TMP
+cat $TMP > beacon.conf
+
+# db database (beacon)
+read -p "Database name: " -e -i "beacon" dbdatabase
+echo $dbdatabase
+sed 's/"database": "beacon"/"database": "'${dbdatabase}'"/' beacon.conf > $TMP
+cat $TMP > beacon.conf
+
+# db username (beacon)
+read -p "Database username: " -e -i "beacon" dbusername
+echo $dbusername
+sed 's/"username": "beacon"/"username": "'${dbusername}'"/' beacon.conf > $TMP
+cat $TMP > beacon.conf
+
+# db password (beacon)
+read -p "Database password: " -e -i "beacon" dbpassword
+echo $dbpassword
+sed 's/"password": "beacon"/"password": "'${dbpassword}'"/' beacon.conf > $TMP
+cat $TMP > beacon.conf
+
+# auth type (db) 
+read -p "Authentication type (db,ldap): " -e -i "db" authtype
+echo $authtype
+sed 's/"authtype": "db"/"authtype": "'${authtype}'"/' beacon.conf > $TMP
+cat $TMP > beacon.conf
+
+# ldap account_suffix (@example.com)
+read -p "LDAP Account Suffix: " -e -i "@example.com" ldap_account_suffix
+echo $ldap_account_suffix
+sed 's/"account_suffix": "@example.com"/"account_suffix": "'${ldap_account_suffix}'"/' beacon.conf > $TMP
+cat $TMP > beacon.conf
+
+# ldap base_dn (DC=example,DC=com)
+read -p "LDAP Base DN: " -e -i "DC=example,DC=com" ldap_base_dn
+echo $ldap_base_dn
+sed 's/"base_dn": "DC=example,DC=com"/"base_dn": "'${ldap_base_dn}'"/' beacon.conf > $TMP
+cat $TMP > beacon.conf
+
+# ldap domain_controller1 (dc1.example.com)
+read -p "LDAP Domain Controller 1: " -e -i "dc1.example.com" ldap_domain_controller1
+echo $ldap_domain_controller1
+sed 's/"dc1.example.com"/"'${ldap_domain_controller1}'"/' beacon.conf > $TMP
+cat $TMP > beacon.conf
+
+# ldap domain_controller2 (dc2.example.com)
+read -p "LDAP Domain Controller 2: " -e -i "dc2.example.com" ldap_domain_controller2
+echo $ldap_domain_controller2
+sed 's/"dc2.example.com"/"'${ldap_domain_controller2}'"/' beacon.conf > $TMP
+cat $TMP > beacon.conf
+
+# ldap admin_username (ldapusername)
+read -p "LDAP Admin Username: " -e -i "ldapusername" ldap_admin_username
+echo $ldap_admin_username
+sed 's/"admin_username": "ldapusername"/"admin_username": "'${ldap_admin_username}'"/' beacon.conf > $TMP
+cat $TMP > beacon.conf
+
+# ldap admin_password (ldappassword)
+read -p "LDAP Admin Password: " -e -i "ldappassword" ldap_admin_password
+echo $ldap_admin_password
+sed 's/"admin_password": "ldappassword"/"admin_password": "'${ldap_admin_password}'"/' beacon.conf > $TMP
+cat $TMP > beacon.conf
+
+# ldap real_primarygroup (false)
+read -p "LDAP Real Primary Group: " -e -i "false" ldap_real_primarygroup
+echo $ldap_real_primarygroup
+sed 's/"real_primarygroup": false/"real_primarygroup": '${ldap_real_primarygroup}'/' beacon.conf > $TMP
+cat $TMP > beacon.conf
+
+# ldap use_ssl ()
+read -p "LDAP Use SSL: " -e -i "" ldap_use_ssl
+echo $ldap_use_ssl
+sed 's/"use_ssl": ""/"use_ssl": "'${ldap_use_ssl}'"/' beacon.conf > $TMP
+cat $TMP > beacon.conf
+
+# ldap use_tls ()
+read -p "LDAP Use TLS: " -e -i "" ldap_use_tls
+echo $ldap_use_tls
+sed 's/"use_tls": ""/"use_tls": "'${ldap_use_tls}'"/' beacon.conf > $TMP
+cat $TMP > beacon.conf
+
+# ldap recursive_groups ()
+read -p "LDAP Recursive Groups: " -e -i "" ldap_recursive_groups
+echo $ldap_recursive_groups
+sed 's/"recursive_groups": ""/"recursive_groups": "'${ldap_recursive_groups}'"/' beacon.conf > $TMP
+cat $TMP > beacon.conf
+
+# ldap ad_port (389)
+read -p "LDAP AD Port Number: " -e -i "389" ldap_ad_port
+echo $ldap_ad_port
+sed 's/"ad_port": "389"/"ad_port": "'${ldap_ad_port}'"/' beacon.conf > $TMP
+cat $TMP > beacon.conf
+
+# ldap sso ()
+read -p "LDAP SSO: " -e -i "" ldap_sso
+echo $ldap_sso
+sed 's/"sso": ""/"sso": "'${ldap_sso}'"/' beacon.conf > $TMP
+cat $TMP > beacon.conf
+
+# language (en_US)
+read -p "Language: " -e -i "en_US" language
+echo $language
+sed 's/"language": "en_US"/"language": "'${language}'"/' beacon.conf > $TMP
+cat $TMP > beacon.conf
+
+# container (#container)
+read -p "HTML container element: " -e -i "#container" container
+echo $container
+sed 's/"container": "#container"/"container": "'${container}'"/' beacon.conf > $TMP
+cat $TMP > beacon.conf
+
+# isRoot (true)
+read -p "isRoot: " -e -i "true" isroot
+echo $isroot
+sed 's/"isRoot": true/"isRoot": '${isroot}'/' beacon.conf > $TMP
+cat $TMP > beacon.conf
+
+# theme (redmond)
+read -p "jQuery UI Theme: " -e -i "redmond" theme
+echo $theme
+sed 's/"theme": "redmond"/"theme": "'${theme}'"/' beacon.conf > $TMP
+cat $TMP > beacon.conf
+
+# storage (flatfile)
+read -p "Storage: " -e -i "flatfile" storage
+echo $storage
+sed 's/"storage": "flatfile"/"storage": "'${storage}'"/' beacon.conf > $TMP
+cat $TMP > beacon.conf
+
 

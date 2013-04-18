@@ -49,7 +49,7 @@
         "i18npath": "beacon/i18n/",
 
         // Path to all HTML
-        "htmlpath" : "beacon/html/",
+        "htmlpath": "beacon/html/",
 
         // Choose what DB engine is to be used
         "dbtype": "mysql",
@@ -70,6 +70,8 @@
           "password": "beacon"
           
         },
+
+        "authtype": "db",
 
         // LDAP specific settings
         "ldap": {

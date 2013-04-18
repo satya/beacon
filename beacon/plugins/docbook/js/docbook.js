@@ -56,7 +56,7 @@ function docbook_dtd() {
 							 "docbookSubscript", "docbookSuperscript",
 							 "docbookprompt"],
             blockChildren: false,
-            siblings: ["docbookScreen", "docbookItemizedList",
+            siblings: ["docbookScreen", "docbookItemizedList", "docbookOrderedList",
                        "docbookProcedure", "docbookPara",
                        "docbookNote", "docbookWarning", "docbookImportant"],
             editorType: "richText",
@@ -69,7 +69,7 @@ function docbook_dtd() {
 
         docbookItemizedList: {
             type: "block",
-            siblings: ["docbookScreen", "docbookItemizedList",
+            siblings: ["docbookScreen", "docbookItemizedList", "docbookOrderedList",
                        "docbookProcedure", "docbookPara",
                        "docbookNote", "docbookWarning", "docbookImportant"],
             markup: {
@@ -102,6 +102,41 @@ function docbook_dtd() {
             }
         },
 
+        docbookOrderedList: {
+            type: "block",
+            siblings: ["docbookScreen", "docbookItemizedList", "docbookOrderedList",
+                       "docbookProcedure", "docbookPara",
+                       "docbookNote", "docbookWarning", "docbookImportant"],
+            markup: {
+                requiredChildNodes: ["docbookOrderedListTitle", "docbookOrderedListContainer"],
+                tag: "div",
+                attributes: false
+            }
+        },
+
+        docbookOrderedListTitle: {
+            type: "block",
+            editorType: "lineedit",
+            markup: {
+                tag: "p",
+                attributes: {
+                    className: "orderedlistitle"
+                },
+                sampleText: "Sample Ordered List"
+            }
+        },
+
+        docbookOrderedListContainer: {
+            type: "block",
+            markup: {
+                requiredChildNodes: ["docbookListItem"],
+                tag: "ul",
+                attributes: {
+                    className: "orderedList"
+                }
+            }
+        },
+
         docbookListItem: {
             type: "block",
             siblings: ["docbookListItem"],
@@ -114,7 +149,7 @@ function docbook_dtd() {
 
         docbookProcedure: {
             type: "block",
-            siblings: ["docbookScreen", "docbookItemizedList",
+            siblings: ["docbookScreen", "docbookItemizedList", "docbookOrderedList",
                        "docbookProcedure", "docbookPara",
                        "docbookNote", "docbookWarning", "docbookImportant"],
             markup: {
@@ -161,7 +196,7 @@ function docbook_dtd() {
             type: "block",
             inlineChildren: false,
             blockChildren: false,
-            siblings: ["docbookScreen", "docbookItemizedList",
+            siblings: ["docbookScreen", "docbookItemizedList", "docbookOrderedList",
                        "docbookProcedure", "docbookPara",
                        "docbookNote", "docbookWarning", "docbookImportant"],
             markup: {
@@ -188,7 +223,7 @@ function docbook_dtd() {
             type: "block",
             inlineChildren: false,
             blockChildren: false,
-            siblings: ["docbookScreen", "docbookItemizedList",
+            siblings: ["docbookScreen", "docbookItemizedList", "docbookOrderedList",
                        "docbookProcedure", "docbookPara",
                        "docbookNote", "docbookWarning", "docbookImportant"],
             markup: {
@@ -215,7 +250,7 @@ function docbook_dtd() {
             type: "block",
             inlineChildren: false,
             blockChildren: false,
-            siblings: ["docbookScreen", "docbookItemizedList",
+            siblings: ["docbookScreen", "docbookItemizedList", "docbookOrderedList",
                        "docbookProcedure", "docbookPara",
                        "docbookNote", "docbookWarning", "docbookImportant"],
             markup: {
@@ -251,7 +286,7 @@ function docbook_dtd() {
 							 "docbookSubscript", "docbookSuperscript",
 							 "docbookprompt"],
             blockChildren: false,
-            siblings: ["docbookScreen", "docbookItemizedList",
+            siblings: ["docbookScreen", "docbookItemizedList", "docbookOrderedList",
                        "docbookProcedure", "docbookPara",
                        "docbookNote", "docbookWarning", "docbookImportant"],
             editorType: "richText",

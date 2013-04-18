@@ -111,6 +111,22 @@
     <xsl:apply-templates />
 </xsl:template>
 
+<xsl:template match="div[@title='docbookOrderedList']">
+    <orderedlist>
+        <xsl:apply-templates />
+    </orderedlist>
+</xsl:template>
+
+<xsl:template match="p[@title='docbookOrderedListTitle']">
+    <title>
+        <xsl:apply-templates />
+    </title>
+</xsl:template>
+
+<xsl:template match="ol[@title='docbookOrderedListContainer']">
+    <xsl:apply-templates />
+</xsl:template>
+
 <xsl:template match="li[@title='docbookListItem']">
     <listitem>
         <xsl:apply-templates />

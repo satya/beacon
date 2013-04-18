@@ -108,6 +108,17 @@
     </div>
 </xsl:template>
 
+<xsl:template match="orderedlist">
+    <div title="docbookOrderedList">
+        <p class="orderedlistitle" title="docbookOrderedListTitle">
+            <xsl:value-of select="title" />
+        </p>
+        <ol title="docbookOrderedListContainer" class="orderedlist">
+            <xsl:apply-templates />
+        </ol>
+    </div>
+</xsl:template>
+
 <xsl:template match="listitem">
     <li title="docbookListItem">
         <xsl:apply-templates />

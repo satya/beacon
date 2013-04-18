@@ -77,6 +77,7 @@
         "ldap": {
           "account_suffix": "@example.com",
           "base_dn": "DC=example,DC=com",
+          "required_group": "",
           "domain_controllers": [
             "dc1.example.com",
             "dc2.example.com"

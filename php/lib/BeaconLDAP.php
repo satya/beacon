@@ -5,11 +5,19 @@ require_once("adLDAP/src/adLDAP.php");
 class BeaconLDAP
 {
   
-  private $adGroup = "DocBook User";
+  private $require_group = FALSE;
+  private $required_group = "DocBook User";
   private $adldap = NULL;
   
   function BeaconLDAP($ldap_configuration)
   {
+    
+    if(array_key_exists('required_group',$ldap_configuration) && isset($ldap_configuration['required_group']) && !empty($ldap_configuration['required_group'])){
+      $this->require_group = TRUE;
+      $this->required_group = $ldap_configuration['required_group'];
+    }
+    
+    unset($ldap_configuration['required_group']);
     
     $this->adldap = new adLDAP($ldap_configuration);
 
@@ -18,9 +26,13 @@ class BeaconLDAP
     public function validate_user($username, $password)
     {
       
-      //$authUser = $adldap->user()->authenticate($username, $password) && $adldap->user()->inGroup($username,$this->adGroup);
+      $authUser = FALSE;
       
-      $authUser = $this->adldap->user()->authenticate($username, $password);
+      if($this->require_group){
+        $authUser = $adldap->user()->authenticate($username, $password) && $adldap->user()->inGroup($username,$this->required_group);
+      }else{
+        $authUser = $this->adldap->user()->authenticate($username, $password);
+      }
     
       if ($authUser == true) {
         

@@ -27,6 +27,7 @@ $beacon_mysql_password = $request->php->mysql->password;
 $beacon_ldap_configuration = array(
   'account_suffix'       => $request->php->ldap->account_suffix,
   'base_dn'              => $request->php->ldap->base_dn,
+  'required_group'       => $request->php->ldap->required_group,
   'domain_controllers'   => $request->php->ldap->domain_controllers,
   'admin_username'       => $request->php->ldap->admin_username,
   'admin_password'       => $request->php->ldap->admin_password,

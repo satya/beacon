@@ -94,6 +94,12 @@ then
   sed 's/"base_dn": "DC=example,DC=com"/"base_dn": "'${ldap_base_dn}'"/' beacon.conf > $TMP
   cat $TMP > beacon.conf
 
+  # ldap required_group ()
+  read -p "LDAP Required Group: " -e -i "" ldap_required_group
+  echo $ldap_required_group
+  sed 's/"required_group": ""/"required_group": "'${ldap_required_group}'"/' beacon.conf > $TMP
+  cat $TMP > beacon.conf
+
   # ldap domain_controller1 (dc1.example.com)
   read -p "LDAP Domain Controller 1: " -e -i "dc1.example.com" ldap_domain_controller1
   echo $ldap_domain_controller1

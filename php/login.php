@@ -32,7 +32,11 @@ if ($beacon_runnable < 0) {
 
 $ldap = new BeaconLDAP($beacon_ldap_configuration);
 
-$auth = new BeaconAuth($ldap);
+if($request->authtype==='ldap'){
+  $auth = new BeaconAuth($ldap);
+}elseif($request->authtype==='db'){
+  $auth = new BeaconAuth($beacon_db_instance);
+}
 
 if (!$auth->check_session()) {
     if (!isset($_POST['name'])) {

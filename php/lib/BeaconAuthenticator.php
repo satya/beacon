@@ -2,15 +2,15 @@
 
 class BeaconAuth
 {
-    var $db;
+    var $auth_connector;
     var $user_id;
     var $username;
     var $password;
     var $ok;
 
-    function BeaconAuth($db)
+    function BeaconAuth($auth_connector)
     {
-        $this->db = $db;
+        $this->auth_connector = $auth_connector;
         $this->user_id = 0;
         $this->username = "Guest";
         $this->ok = false;
@@ -29,7 +29,7 @@ class BeaconAuth
 
     function login($username, $password)
     {
-        $user = $this->db->validate_user($username, $password);
+        $user = $this->auth_connector->validate_user($username, $password);
 
         if($user)
         {
@@ -51,7 +51,7 @@ class BeaconAuth
 
     function check($username, $password)
     {
-        $user = $this->db->validate_user($username, $password);
+        $user = $this->auth_connector->validate_user($username, $password);
 
         if($user)
         {

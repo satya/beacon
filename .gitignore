@@ -4,3 +4,4 @@
 *.swp
 *~
 beacon/beacon.conf
+httpd-beacon.conf

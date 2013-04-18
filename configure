@@ -3,9 +3,11 @@ TMP=/tmp/tmpfile
 
 echo ""
 echo "Beacon configuration script"
-echo "This configuration script should only be run once.  If you want to change settings again, you'll have to unzip the archive and start over."
+# echo "This configuration script should only be run once.  If you want to change settings again, you'll have to unzip the archive and start over."
 echo ""
 echo ""
+
+cp httpd-beacon.conf.sample httpd-beacon.conf
 
 cd beacon
 sed -e '/^\/\//d' -e '/ \/\//d' -e '/^$/d' beacon.conf.sample > beacon.conf

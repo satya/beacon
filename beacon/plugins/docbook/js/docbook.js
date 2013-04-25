@@ -8,6 +8,26 @@
 
 function docbook_dtd() {
 
+    var common = {
+      
+      inlineChildren: ["docbookSGMLTag", "docbookFileName", "docbookXref",
+                             "docbookCommand", "docbookOption",
+                             "docbookUserInput", "docbookComputerOutput",
+							 "docbookEmphasis", "docbookClassName",
+							 "docbookConstant", "docbookFunction",
+							 "docbookParameter", "docbookReplaceable",
+							 "docbookVarname", "docbookStructfield",
+							 "docbookSystemItem", "docbookPackage",
+							 "docbookSubscript", "docbookSuperscript",
+							 "docbookPrompt"],
+               
+      blockSiblings: ["docbookScreen", "docbookItemizedList", "docbookOrderedList",
+                       "docbookProcedure", "docbookPara",
+                       "docbookNote", "docbookWarning", "docbookImportant"]
+      
+      
+    };
+
     var dtd = {
         docbookArticle: {
             removable: false
@@ -45,20 +65,9 @@ function docbook_dtd() {
 
         docbookPara: {
             type: "block",
-            inlineChildren: ["docbookSGMLTag", "docbookFileName",
-                             "docbookCommand", "docbookOption",
-                             "docbookUserInput", "docbookComputerOutput",
-							 "docbookEmphasis", "docbookClassName",
-							 "docbookConstant", "docbookFunction",
-							 "docbookParameter", "docbookReplaceable",
-							 "docbookVarname", "docbookStructfield",
-							 "docbookSystemItem", "docbookPackage",
-							 "docbookSubscript", "docbookSuperscript",
-							 "docbookprompt"],
+            inlineChildren: common.inlineChildren,
             blockChildren: false,
-            siblings: ["docbookScreen", "docbookItemizedList", "docbookOrderedList",
-                       "docbookProcedure", "docbookPara",
-                       "docbookNote", "docbookWarning", "docbookImportant"],
+            siblings: common.blockSiblings,
             editorType: "richText",
             markup: {
                 tag: "p",
@@ -69,9 +78,7 @@ function docbook_dtd() {
 
         docbookItemizedList: {
             type: "block",
-            siblings: ["docbookScreen", "docbookItemizedList", "docbookOrderedList",
-                       "docbookProcedure", "docbookPara",
-                       "docbookNote", "docbookWarning", "docbookImportant"],
+            siblings: common.blockSiblings,
             markup: {
                 requiredChildNodes: ["docbookItemizedListTitle", "docbookItemizedListContainer"],
                 tag: "div",
@@ -104,9 +111,7 @@ function docbook_dtd() {
 
         docbookOrderedList: {
             type: "block",
-            siblings: ["docbookScreen", "docbookItemizedList", "docbookOrderedList",
-                       "docbookProcedure", "docbookPara",
-                       "docbookNote", "docbookWarning", "docbookImportant"],
+            siblings: common.blockSiblings,
             markup: {
                 requiredChildNodes: ["docbookOrderedListTitle", "docbookOrderedListContainer"],
                 tag: "div",
@@ -149,9 +154,7 @@ function docbook_dtd() {
 
         docbookProcedure: {
             type: "block",
-            siblings: ["docbookScreen", "docbookItemizedList", "docbookOrderedList",
-                       "docbookProcedure", "docbookPara",
-                       "docbookNote", "docbookWarning", "docbookImportant"],
+            siblings: common.blockSiblings,
             markup: {
                 requiredChildNodes: ["docbookProcedureTitle", "docbookProcedureContainer"],
                 tag: "div",
@@ -196,9 +199,7 @@ function docbook_dtd() {
             type: "block",
             inlineChildren: false,
             blockChildren: false,
-            siblings: ["docbookScreen", "docbookItemizedList", "docbookOrderedList",
-                       "docbookProcedure", "docbookPara",
-                       "docbookNote", "docbookWarning", "docbookImportant"],
+            siblings: common.blockSiblings,
             markup: {
                 requiredChildNodes: ["docbookNoteTitle", "docbookPara"],
                 tag: "div",
@@ -223,9 +224,7 @@ function docbook_dtd() {
             type: "block",
             inlineChildren: false,
             blockChildren: false,
-            siblings: ["docbookScreen", "docbookItemizedList", "docbookOrderedList",
-                       "docbookProcedure", "docbookPara",
-                       "docbookNote", "docbookWarning", "docbookImportant"],
+            siblings: common.blockSiblings,
             markup: {
                 requiredChildNodes: ["docbookWarningTitle", "docbookPara"],
                 tag: "div",
@@ -250,9 +249,7 @@ function docbook_dtd() {
             type: "block",
             inlineChildren: false,
             blockChildren: false,
-            siblings: ["docbookScreen", "docbookItemizedList", "docbookOrderedList",
-                       "docbookProcedure", "docbookPara",
-                       "docbookNote", "docbookWarning", "docbookImportant"],
+            siblings: common.blockSiblings,
             markup: {
                 requiredChildNodes: ["docbookImportantTitle", "docbookPara"],
                 tag: "div",
@@ -275,20 +272,9 @@ function docbook_dtd() {
 
         docbookScreen: {
             type: "block",
-            inlineChildren: ["docbookSGMLTag", "docbookFileName",
-                             "docbookCommand", "docbookOption",
-                             "docbookUserInput", "docbookComputerOutput",
-							 "docbookEmphasis", "docbookClassName",
-							 "docbookConstant", "docbookFunction",
-							 "docbookParameter", "docbookReplaceable",
-							 "docbookVarname", "docbookStructfield",
-							 "docbookSystemItem", "docbookPackage",
-							 "docbookSubscript", "docbookSuperscript",
-							 "docbookprompt"],
+            inlineChildren: common.inlineChildren,
             blockChildren: false,
-            siblings: ["docbookScreen", "docbookItemizedList", "docbookOrderedList",
-                       "docbookProcedure", "docbookPara",
-                       "docbookNote", "docbookWarning", "docbookImportant"],
+            siblings: common.blockSiblings,
             editorType: "richText",
             markup: {
                 tag: "pre",
@@ -301,6 +287,18 @@ function docbook_dtd() {
 
 
         // Inline Tags below this
+
+        docbookXref: {
+            type: "inline",
+            inlineType: "prompt",
+            markup: {
+                tag: "a",
+                attributes: {
+                    className: "xref",
+                    linkend: "prompt"
+                }
+            }
+        },
 
         docbookSGMLTag: {
             type: "inline",

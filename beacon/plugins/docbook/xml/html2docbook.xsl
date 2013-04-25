@@ -167,6 +167,13 @@
 <!-- Inline tags below this -->
 <!-- ********************** -->
 
+<xsl:template match="a[@title='docbookXref']">
+    <xsl:variable name="linkend" select="@linkend" />
+    <xref linkend="{$linkend}">
+        <xsl:apply-templates />
+    </xref>
+</xsl:template>
+
 <xsl:template match="span[@title='docbookSGMLTag']">
     <xsl:variable name="classname" select="substring(@class, 9)" />
     <sgmltag class="{$classname}">

@@ -286,6 +286,7 @@ BeaconAPI.prototype.buildInlineInsertMenu = function(nodeDef) {
 };
 
 BeaconAPI.prototype.insertInline = function() {
+  
     if (!this.state["editing"]) {
         $.jGrowl("You are not editing anything!");
         return;
@@ -317,10 +318,74 @@ BeaconAPI.prototype.insertInline = function() {
     var text = this.iframe.getSelection();
 
     if (insertDef.inlineType === "generic") {
-        // If its generic then just dump it in the iframe
+        // If it's generic then just dump it in the iframe
         var html = this.buildHTML(val, insertDef.markup, text);
         this.currentEditor.insertText(html);
     }
+    
+    if (insertDef.inlineType === "prompt") {
+        // If it's "prompt" then prompt for input on attributes that have value "prompt"
+        var thisElement = $.extend(true,{},insertDef.markup);
+        var promptFields = "";
+        
+        for(var k in thisElement.attributes){
+          if(thisElement.attributes[k] === "prompt"){
+            var promptName = k;
+            if(k==="linkend"){
+              // for linkend, gather tree nodes with IDs
+              promptFields += "<label for='" + promptName + "'>" + promptName + "</label>";
+              promptFields += "<select name='" + promptName + "' id='" + promptName + "'>";
+              for(var n in this.tree){
+                if(this.tree[n].node.id!==""){
+                  var thisId = this.tree[n].node.id;
+                  var thisName = this.tree[n].node.firstElementChild.innerHTML;
+                  promptFields += "<option value='" + thisId + "'>" + thisName + "</option>";
+                }
+              }
+              promptFields += "</select>";
+              
+            }else{
+              promptFields += "<label for='" + promptName + "'>" + promptName + "</label>";
+              promptFields += "<input type='text' name='" + promptName + "' id='" + promptName + "' class='text ui-widget-content ui-corner-all' />";
+            }
+          }
+        }
+        
+        var promptDialog = $("<div class='prompt-dialog'><p class='validateTips'>All form fields are required.</p><form><fieldset>" + promptFields + "</fieldset></form></div>");
+        
+        var thisParent = this;
+        
+        $(promptDialog).dialog({
+          autoOpen: false,
+          height: 300,
+          width: 350,
+          modal: true,
+          buttons: {
+            Save: function() {
+              var bValid = true;
+              if ( bValid ) {
+                
+                var formValues = $($(promptDialog).find("form")[0]).serializeArray();
+                
+                for(var k in formValues){
+                  var formValue = formValues[k];
+                  thisElement.attributes[formValue.name] = formValue.value;
+                }
+                $( this ).dialog( "close" );
+              }
+            }
+          },
+          close: function() {
+            //allFields.val( "" ).removeClass( "ui-state-error" );
+            var html = thisParent.buildHTML(val, thisElement, text);
+            thisParent.currentEditor.insertText(html);
+          }
+        });
+        
+        $(promptDialog).dialog("open");
+    }
+
+    
 };
 
 BeaconAPI.prototype.buildHTML = function(title, markup, text) {

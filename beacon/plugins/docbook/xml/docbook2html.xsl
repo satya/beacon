@@ -154,6 +154,12 @@
 <!-- Inline tags below this -->
 <!-- ********************** -->
 
+<xsl:template match="xref">
+    <a title="docbookXref" class="xref" linkend="{@linkend}">
+        <xsl:apply-templates />
+    </a>
+</xsl:template>
+
 <xsl:template match="sgmltag">
     <span title="docbookSGMLTag" class="sgmltag-{@class}">
         <xsl:apply-templates />

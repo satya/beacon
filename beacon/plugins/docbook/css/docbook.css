@@ -20,8 +20,12 @@ div {
 }
 
 div.section {
-  padding-top:1em;
+  padding:1em;
+  margin-top: 1em;
+  margin-left: 2em;
 }
+
+div.section:hover { background-color: rgba(0,0,0,0.05); box-shadow: 0 0 5px -1px rgba(0,0,0,0.5); }
 
 p, div.para, div.formalpara {
   padding-top:0px;
@@ -328,6 +332,12 @@ img {
 
 .longdesc {
   display:none;
+}
+
+.xref {
+  font-weight: bold;
+  color: #0a7adb;
+  cursor: pointer;
 }
 
 .prompt {

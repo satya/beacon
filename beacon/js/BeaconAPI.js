@@ -96,6 +96,8 @@ var BeaconAPI = function(o, beacon) {
         $(this.ui["Iframe"].id).contents().bind("click", this.frameClick.attach(this));
         $(this.ui["Iframe"].id).contents().bind("keydown", this.frameKeyDown.attach(this));
 
+        this.selectionEvents();
+        
         this.buildTree();
 
     }.attach(this));
@@ -739,11 +741,36 @@ BeaconAPI.prototype.getHTML = function(displayFlag) {
 
             $(this.ui["DesignViewLoading"].id).hide();
             $(this.ui["Iframe"].id).show();
+            
+            this.selectionEvents();
 
             this.buildTree();
         }.attach(this)
     });
 };
+
+BeaconAPI.prototype.selectionEvents = function(){
+  
+  var elements = ['div','h1','h2','h3','h4','h5','h6','p'];
+  
+  for(i in elements){
+    var element = elements[i];
+    $(document.getElementById(this.id+"Iframe").contentWindow.document).find(element).click(function(evt){
+      
+      var el = evt.target;
+      var nodeId = getNodeId(this.id,getElementPath(el));
+      selectTreeNode(nodeId);
+      
+      $($(el).parents("body")[0]).find(".selected").removeClass("selected");
+      $(el).addClass("selected");
+
+      
+      //evt.stopPropagation();
+      
+    }.attach(this));
+  }
+  
+}
 
 BeaconAPI.prototype.getRevisions = function() {
     this.state["fetchingRevisions"] = true;
@@ -1155,6 +1182,7 @@ BeaconAPI.prototype.walkDOM = function(root) {
 //-----------------------------Different Editors -------------------------------
 
 var BeaconRichTextEditor = function(o, iframe) {
+  
     // Store this node
     this.node = o;
 
@@ -1202,27 +1230,116 @@ BeaconRichTextEditor.prototype.getType = function() {
 
 function getElementPath(element)
 {
-    var rightArrowParents = [];
+    var elementTitleArray = [];
     $(element).parents().not('html').not('body').each(function() {
+      if(typeof this.title !== "undefined" && this.title!==""){
         var entry = this.title;
-        if ($(this).siblings(this.tagName).length > 0) {
-            entry += "[" + $(this).prevAll(this.tagName).length + "]";
+        if ($(this).siblings(this.tagName+"[title="+this.title+"]").length > 0) {
+            entry += "[" + $(this).prevAll(this.tagName+"[title="+this.title+"]").length + "]";
         }
-        rightArrowParents.push(entry);
+        elementTitleArray.push(entry);
+      }
     });
-    rightArrowParents.reverse();
-    rightArrowParents.push(element.title);
+    elementTitleArray.reverse();
     
+    var entry = element.title;
+    if ($(element).siblings(element.tagName+"[title="+element.title+"]").length > 0) {
+        entry += "[" + $(element).prevAll(element.tagName+"[title="+element.title+"]").length + "]";
+    }
+    elementTitleArray.push(entry);
+
     
-    return rightArrowParents;
+    return elementTitleArray;
+}
+
+/*
+an example of how to select and open nodes in the tree from outside of the tree (a bit of a hack)
+
+$("#14BeaconTreeContainer .clicked").removeClass("clicked");
+$("#14_node_13").removeClass("closed").addClass('open').find(">a").addClass("clicked");
+*/
+
+function getNodeId(documentId,elementPath){
+  
+  console.log(elementPath);
+  
+  // root node of tree
+  var thisNode = $("#"+documentId+"BeaconTreeContainer>ul>li")[0];
+  var nextElement = elementPath.shift();
+  var depth = 0;
+  
+  // possibly unnecessary to evaluate root
+  if($(thisNode).find(">a").text()===nextElement){
+    while(elementPath.length>0){
+      
+      nextElement = elementPath.shift();
+      
+      var regex = /[\w]+/g;
+      var matches = nextElement.match(regex);
+      
+      if(matches.length>0){
+        
+        var elementName = "";
+        var elementIndex = 0;
+        
+        elementName = matches[0];
+        if(matches.length>1){
+          elementIndex = parseInt(matches[1],10);
+        }
+        
+        var nodesText = new Array();
+        var goodIterator = 0;
+        
+        $(thisNode).find(">ul>li").each(function(i,el){
+          
+          var thisAnchor = $(el).find(">a")[0];
+          if($(thisAnchor).text()===elementName){
+            if(goodIterator===elementIndex){
+              thisNode = el;
+            }
+            goodIterator++;
+          }          
+        });
+        
+        console.log("current ID: " + thisNode.id);
+      }
+      depth++;
+    }
+  }
+  console.log("found Id: " + thisNode.id);
+  
+  return thisNode.id;
+  
+}
+
+function selectTreeNode(nodeId){
+
+  if($("#"+nodeId).length>0){
+    var $thisNode = $("#"+nodeId);
+    do{
+      if(!$thisNode.hasClass("leaf")){
+        $thisNode.removeClass("closed").addClass('open');
+      }
+      $thisNode = $thisNode.parent();
+    }while(!$thisNode.parent().hasClass(".tree"));
+    
+    $($("#"+nodeId).parents(".tree")[0]).find(".clicked").removeClass("clicked");
+    $("#"+nodeId).find(">a").addClass("clicked");
+  }
+  
 }
 
 
 var BeaconLineEditor = function(o, iframe) {
+  /*
     // need to open up visual tree when clicking on something.
     console.log(o);
     console.log(getElementPath(o));
     
+    var documentId = iframe.frameElement.id.replace("Iframe","");
+    var nodeId = getNodeId(documentId,getElementPath(o));
+    selectTreeNode(nodeId);
+    */
     // Store this node
     this.node = o;
 
@@ -1268,6 +1385,7 @@ BeaconLineEditor.prototype.getNode = function() {
 
 
 var BeaconPlainTextEditor = function(o, iframe) {
+  
     // Store this node
     this.node = o;
 

@@ -16,6 +16,11 @@
     height: 500px;
 }
 
+.BeaconPanel {
+    float: left; clear: left; width: 95%; padding: 1em 2%;
+    margin: 2em 0; border: 1px solid rgba(0,0,0,0.1);
+}
+
 .BeaconFieldSet {
     border: 1px solid #a6c9e2;
     padding: 5px;
@@ -137,3 +142,7 @@ a.BeaconButton:hover {
     cursor: pointer;
     outline: none;
 }
+
+.ui-dialog label,
+.ui-dialog input,
+.ui-dialog select { margin: 1em; }

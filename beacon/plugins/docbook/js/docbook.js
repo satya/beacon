@@ -80,7 +80,7 @@ function docbook_dtd() {
             type: "block",
             siblings: common.blockSiblings,
             markup: {
-                requiredChildNodes: ["docbookItemizedListTitle", "docbookItemizedListContainer"],
+                requiredChildNodes: ["docbookItemizedListContainer"],
                 tag: "div",
                 attributes: false
             }
@@ -113,7 +113,7 @@ function docbook_dtd() {
             type: "block",
             siblings: common.blockSiblings,
             markup: {
-                requiredChildNodes: ["docbookOrderedListTitle", "docbookOrderedListContainer"],
+                requiredChildNodes: ["docbookOrderedListContainer"],
                 tag: "div",
                 attributes: false
             }
@@ -135,7 +135,7 @@ function docbook_dtd() {
             type: "block",
             markup: {
                 requiredChildNodes: ["docbookListItem"],
-                tag: "ul",
+                tag: "ol",
                 attributes: {
                     className: "orderedList"
                 }

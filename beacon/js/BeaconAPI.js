@@ -334,7 +334,7 @@ BeaconAPI.prototype.insertInline = function() {
             if(k==="linkend"){
               // for linkend, gather tree nodes with IDs
               promptFields += "<label for='" + promptName + "'>" + promptName + "</label>";
-              promptFields += "<select name='" + promptName + "' id='" + promptName + "'>";
+              promptFields += "<select name='" + promptName + "' id='" + promptName + "' class='text ui-widget-content ui-corner-all'>";
               for(var n in this.tree){
                 if(this.tree[n].node.id!==""){
                   var thisId = this.tree[n].node.id;
@@ -357,6 +357,7 @@ BeaconAPI.prototype.insertInline = function() {
         
         $(promptDialog).dialog({
           autoOpen: false,
+          draggable: true,
           height: 300,
           width: 350,
           modal: true,
@@ -820,6 +821,8 @@ BeaconAPI.prototype.generateTreeNodeID = function() {
 
 BeaconAPI.prototype.buildTree = function() {
     var html = "";
+    
+    var icon_path = "../beacon/img/";
 
     var root = this.iframe.document.body;
 
@@ -829,10 +832,11 @@ BeaconAPI.prototype.buildTree = function() {
 
     $(this.ui["BeaconTreeContainer"].id).tree({
         ui : {
+          theme_path:'../beacon/img/',
             context : [
             {
                 id    : this.id + "addSiblingBefore",
-                icon  : "img/create.png",
+                icon  : icon_path + "create.png",
                 label  : "Add Sibling Before This Node",
                 visible  : function (node) {
                     var name = $(this.tree[node.attr("id")].node).attr("title");
@@ -921,7 +925,7 @@ BeaconAPI.prototype.buildTree = function() {
             {
                 id    : this.id + "addSiblingAfter",
                 label  : "Add Sibling After This Node",
-                icon  : "img/create.png",
+                icon  : icon_path + "create.png",
                 visible  : function (node) {
                     var name = $(this.tree[node.attr("id")].node).attr("title");
 
@@ -1009,7 +1013,7 @@ BeaconAPI.prototype.buildTree = function() {
             {
                  id    : this.id + "removeNode",
                  label  : "Delete this Node",
-                 icon  : "img/remove.png",
+                 icon  : icon_path + "remove.png",
                  visible  : function (node) {
                      var name = $(this.tree[node.attr("id")].node).attr("title");
 
@@ -1058,14 +1062,18 @@ BeaconAPI.prototype.buildTree = function() {
         },
 
         callback : {
-            beforechange: function() {  },
+            beforechange: function(node) { $($(node).parents(".tree")[0]).find(".clicked").removeClass("clicked"); },
             beforeopen  : function() {  },
             beforeclose : function() {  },
             beforemove  : function() {  },
             beforecreate: function() {  },
             beforerename: function() {  },
             beforedelete: function() {  },
-            onselect    : function() {  },
+            onselect    : function(node) {
+              var id = node.id;
+              $($(this.tree[id].node).parents("body")[0]).find(".selected").removeClass("selected");
+              $(this.tree[id].node).addClass("selected");
+            }.attach(this),
             ondeselect  : function() {  },
             onchange    : function() {  },
             onrename    : function() {  },
@@ -1079,12 +1087,11 @@ BeaconAPI.prototype.buildTree = function() {
             error       : function() {  },
 
             ondblclk    : function(node) {
-                var id = node.id;
-
-                $(this.ui["Iframe"].id).scrollTo(this.tree[id].node, {
-                    duration: 600
-                });
-
+              var id = node.id;
+              $("#"+id).removeClass("closed").addClass("open");
+              $(this.ui["Iframe"].id).scrollTo(this.tree[id].node, {
+                duration: 600
+              });
             }.attach(this),
 
             onrgtclk    : function() {  },
@@ -1193,8 +1200,29 @@ BeaconRichTextEditor.prototype.getType = function() {
 };
 
 
+function getElementPath(element)
+{
+    var rightArrowParents = [];
+    $(element).parents().not('html').not('body').each(function() {
+        var entry = this.title;
+        if ($(this).siblings(this.tagName).length > 0) {
+            entry += "[" + $(this).prevAll(this.tagName).length + "]";
+        }
+        rightArrowParents.push(entry);
+    });
+    rightArrowParents.reverse();
+    rightArrowParents.push(element.title);
+    
+    
+    return rightArrowParents;
+}
+
 
 var BeaconLineEditor = function(o, iframe) {
+    // need to open up visual tree when clicking on something.
+    console.log(o);
+    console.log(getElementPath(o));
+    
     // Store this node
     this.node = o;
 

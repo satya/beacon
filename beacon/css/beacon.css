@@ -21,6 +21,9 @@
     margin: 2em 0; border: 1px solid rgba(0,0,0,0.1);
 }
 
+.BeaconPanel select { width: 100%;}
+.BeaconPanel option { width: 95%; padding: 0.1em 2.5%; }
+
 .BeaconFieldSet {
     border: 1px solid #a6c9e2;
     padding: 5px;
@@ -146,3 +149,4 @@ a.BeaconButton:hover {
 .ui-dialog label,
 .ui-dialog input,
 .ui-dialog select { margin: 1em; }
+.tree .ltr li a, .tree .rtl li a { margin: 0.2em; }

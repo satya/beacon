@@ -238,12 +238,14 @@ ul.languages {
 
 ul {
   padding-left:1.6em;
+  /*
   list-style-image:url(../images/dot.png);
   list-style-type: circle;
+  */
 }
 
 ul ul {
-  list-style-image:url(../images/dot2.png);
+  /*list-style-image:url(../images/dot2.png);*/
   list-style-type: circle;
 }
 

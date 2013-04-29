@@ -367,6 +367,7 @@ Beacon.prototype.editDoc = function(e) {
     $(this.container).tabs("add", container, filename);
     $(container).addClass('BeaconDocumentTab');
     $(this.container).tabs('select', container);
+    
 
     this.showLoading(container, "Please wait while the document is being created...");
 
@@ -405,6 +406,9 @@ Beacon.prototype.editDoc = function(e) {
             this.beacon.pluginManager.initDocument(ooo);
 
             this.beacon.refreshDocumentList();
+            
+            $("#"+id+"ToolsTab").tabs();
+            
         }.attach(attached)
     });
 
@@ -462,6 +466,9 @@ Beacon.prototype.initDoc = function(filename, id, action, plugin, source) {
             this.beacon.pluginManager.initDocument(ooo);
 
             this.beacon.refreshDocumentList();
+            
+            $("#"+id+"ToolsTab").tabs();
+            
         }.attach(attached)
     });
 };

@@ -21,8 +21,16 @@
     margin: 2em 0; border: 1px solid rgba(0,0,0,0.1);
 }
 
-.BeaconPanel select { width: 100%;}
-.BeaconPanel option { width: 95%; padding: 0.1em 2.5%; }
+.BeaconTab {  }
+.BeaconTab:after {
+    content: ".";
+    display: block;
+    height: 0;
+    clear: both;
+    visibility: hidden;
+}
+.BeaconTab select { width: 100%;}
+.BeaconTab option { width: 95%; padding: 0.1em 2.5%; }
 
 .BeaconFieldSet {
     border: 1px solid #a6c9e2;

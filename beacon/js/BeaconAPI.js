@@ -1269,8 +1269,6 @@ $("#14_node_13").removeClass("closed").addClass('open').find(">a").addClass("cli
 
 function getNodeId(documentId,elementPath){
   
-  console.log(elementPath);
-  
   // root node of tree
   var thisNode = $("#"+documentId+"BeaconTreeContainer>ul>li")[0];
   var nextElement = elementPath.shift();
@@ -1309,12 +1307,10 @@ function getNodeId(documentId,elementPath){
           }          
         });
         
-        console.log("current ID: " + thisNode.id);
       }
       depth++;
     }
   }
-  console.log("found Id: " + thisNode.id);
   
   return thisNode.id;
   

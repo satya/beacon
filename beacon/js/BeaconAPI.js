@@ -314,11 +314,6 @@ BeaconAPI.prototype.insertInline = function() {
         return;
     }
 
-    if (val.length !== 1) {
-        $.jGrowl("I told you to select only option! :)");
-        return;
-    }
-
     var insertDef = this.dtd[val] || null;
 
     if (!insertDef) {
@@ -361,7 +356,7 @@ BeaconAPI.prototype.insertInline = function() {
           }
         }
         
-        var promptDialog = $("<div class='prompt-dialog'><p class='validateTips'>All form fields are required.</p><form><fieldset>" + promptFields + "</fieldset></form></div>");
+        var promptDialog = $("<div class='prompt-dialog' title='Attribute values'><p class='validateTips'>All form fields are required.</p><form><fieldset>" + promptFields + "</fieldset></form></div>");
         
         var thisParent = this;
         
@@ -528,11 +523,41 @@ BeaconAPI.prototype.buildNodeStructure = function(title) {
 // --------------------- Save and close Functions ------------------------------
 
 BeaconAPI.prototype.closeDocument = function() {
+  
+    if (this.state["editing"]) {
+        $.jGrowl("Please finish editing before closing.");
+        return;
+    }
+
+  
+  var thisDocument = this;
+  
+    $("<div title='Close Document'>Do you want to save the current changes?</div>").dialog({
+      resizable: false,
+      modal: true,
+      buttons: {
+        "Cancel": function() {
+          $(this).dialog("close");
+        },
+        "Just close": function() {
+          thisDocument.beacon.closeDoc(thisDocument.id);
+          $(this).dialog("close");
+        },
+        "Save and close": function() {
+          thisDocument.saveDocument();
+          thisDocument.beacon.closeDoc(thisDocument.id);
+          $(this).dialog("close");
+        }
+      }
+    });
+  
+  /*
     if (confirm("Do you want to save the current changes?")) {
         this.saveDocument();
     }
+  */
 
-    this.beacon.closeDoc(this.id);
+    //this.beacon.closeDoc(this.id);
 };
 
 BeaconAPI.prototype.autoSave = function() {
@@ -1123,7 +1148,9 @@ BeaconAPI.prototype.buildTree = function() {
 
             ondblclk    : function(node) {
               var id = node.id;
-              $("#"+id).removeClass("closed").addClass("open");
+              if($("#"+id).hasClass("closed")){
+                $("#"+id).removeClass("closed").addClass("open");
+              }
               $(this.ui["Iframe"].id).scrollTo(this.tree[id].node, {
                 duration: 600
               });

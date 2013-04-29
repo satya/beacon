@@ -10,20 +10,40 @@ function docbook_dtd() {
 
     var common = {
       
-      inlineChildren: ["docbookSGMLTag", "docbookFileName", "docbookXref",
-                             "docbookCommand", "docbookOption",
-                             "docbookUserInput", "docbookComputerOutput",
-							 "docbookEmphasis", "docbookClassName",
-							 "docbookConstant", "docbookFunction",
-							 "docbookParameter", "docbookReplaceable",
-							 "docbookVarname", "docbookStructfield",
-							 "docbookSystemItem", "docbookPackage",
-							 "docbookSubscript", "docbookSuperscript",
-							 "docbookPrompt"],
+      inlineChildren: [
+      "docbookXref",
+      "docbookEmphasis",
+      "docbookSubscript",
+      "docbookSuperscript",
+
+      "docbookSGMLTag",
+      "docbookFileName",
+      "docbookCommand",
+      "docbookOption",
+      "docbookUserInput",
+      "docbookComputerOutput",
+      "docbookClassName",
+      "docbookConstant",
+      "docbookFunction",
+      "docbookParameter",
+      "docbookReplaceable",
+      "docbookVarname",
+      "docbookStructfield",
+      "docbookSystemItem",
+      "docbookPackage",
+      "docbookPrompt"
+      ],
                
-      blockSiblings: ["docbookScreen", "docbookItemizedList", "docbookOrderedList",
-                       "docbookProcedure", "docbookPara",
-                       "docbookNote", "docbookWarning", "docbookImportant"]
+      blockSiblings: [
+      "docbookScreen", 
+      "docbookItemizedList",
+      "docbookOrderedList",
+      "docbookProcedure",
+      "docbookPara",
+      "docbookNote",
+      "docbookWarning",
+      "docbookImportant"
+      ]
       
       
     };

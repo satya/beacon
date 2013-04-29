@@ -279,6 +279,14 @@ BeaconAPI.prototype.buildInlineInsertMenu = function(nodeDef) {
     }
 
     for (var i = 0; i < list.length; i++) {
+      
+        if(list[i]==="docbookXref"){
+          html += "<optgroup label='General Editorial Tags'></optgroup>";
+        }
+        if(list[i]==="docbookSGMLTag"){
+          html += "<optgroup label='Computer Language Tags'></optgroup>";
+        }
+      
         html += '<option value="'+list[i]+'">';
         html += list[i];
         html += '</option>';

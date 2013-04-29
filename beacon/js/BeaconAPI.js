@@ -539,7 +539,7 @@ BeaconAPI.prototype.closeDocument = function() {
         "Cancel": function() {
           $(this).dialog("close");
         },
-        "Just close": function() {
+        "Close without saving": function() {
           thisDocument.beacon.closeDoc(thisDocument.id);
           $(this).dialog("close");
         },

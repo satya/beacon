@@ -172,12 +172,20 @@ Beacon.prototype.init = function() {
                 $("#BeaconConfigPlugins").append("<span>" + this.settings.plugins[i] + " </span>");
                 $("#BeaconNewDocType").append("<option value=\"" + i + "\">" + this.settings.plugins[i] + " </option>");
                 $("#BeaconEditDocType").append("<option value=\"" + i + "\">" + this.settings.plugins[i] + " </option>");
-		$("#BeaconUploadDocType").append("<option value=\"" + i + "\">" + this.settings.plugins[i] + " </option>");
+                $("#BeaconUploadDocType").append("<option value=\"" + i + "\">" + this.settings.plugins[i] + " </option>");
             }
 
             $("#BeaconConfigLanguage").html(this.settings.language);
             $("#BeaconConfigTheme").html(this.settings.theme);
 
+            $("#BeaconNewDocumentMenu").find("select[id$=template]:first-child").hide();
+
+            $("#BeaconNewDocType").change(function(evt){
+              var selectedType = $.trim($(evt.target).find("option:selected").text());
+              $("#BeaconNewDocumentMenu").find("select[id$=template]").hide(100,function(){
+                $("#" + selectedType + "-template").show();
+              });
+            });
 
             resizeDocuments();
 
@@ -315,11 +323,15 @@ Beacon.prototype.newDoc = function() {
     $("#BeaconNewFileName").val("");
     $("#BeaconNewDocType").val(-1);
 
+    var selectedType = $.trim($("#BeaconNewDocType").find("option:selected").text());
+    var selected_template = $("#" + selectedType + "-template").val();
+
+
     // To add some randomness to the tab id temporarily
     id = Math.floor(Math.random()*10001);
 
     this.initDoc(filename, id, "newdoc",
-                    this.settings.plugins[filetype], undefined);
+                    this.settings.plugins[filetype], undefined, selected_template);
 };
 
 
@@ -419,7 +431,7 @@ Beacon.prototype.editDoc = function(e) {
     return false;
 };
 
-Beacon.prototype.initDoc = function(filename, id, action, plugin, source) {
+Beacon.prototype.initDoc = function(filename, id, action, plugin, source, alttemplate) {
     container = '#' + filename + id;
 
     $(this.container).tabs("add", container, filename);
@@ -432,7 +444,8 @@ Beacon.prototype.initDoc = function(filename, id, action, plugin, source) {
     var o = {
         plugin: plugin,
         filename: filename,
-        xmlsource: source
+        xmlsource: source,
+        alttemplate: alttemplate
     };
 
     var data = {

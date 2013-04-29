@@ -28,9 +28,43 @@ class BeaconAPI
         $html = str_replace("{imgpath}", $this->settings->url . $this->settings->php->imagepath, $html);
 
         $html = str_replace("{previousdocs}", $this->getdoclist(), $html);
+        
+        $html = str_replace("{alttemplates}", $this->gettemplates(), $html);
 
         // Return
         return $html;
+    }
+
+    /**
+     * returns a select list of templates for each xml plugin by filename and path
+     * 
+     */ 
+    function gettemplates() {
+        $text = "";
+        
+        if($handle = opendir($this->fullPath . 'beacon/plugins/')){
+            while(false !== ($entry = readdir($handle))){
+                if($entry!=='.' && $entry!=='..' && $handle2 = opendir($this->fullPath . 'beacon/plugins/' . $entry . '/xml')){
+                  
+                  $text .= "<select id='$entry-template'>";
+                  
+                    while(false !== ($entry2 = readdir($handle2))){
+                        $path_parts = pathinfo($entry2);
+                        if($path_parts['extension']==='xml'){
+                            //error_log($entry . ' - ' . $entry2);
+                            $text .= "<option value='$entry2'>$entry2</option>";
+                        }
+                    }
+                    
+                  $text .= "</select>";
+                  
+                }
+            }
+            closedir($handle);
+        }
+      
+        return $text;
+      
     }
 
     function getdoclist() {
@@ -57,7 +91,8 @@ class BeaconAPI
         $plugin = $this->request->payload->plugin;
         $filename = $this->request->payload->filename;
         $xmlsource = $this->request->payload->xmlsource;
-
+        $alttemplate = $this->request->payload->alttemplate;
+        
         // Get the plugin Object
         $plugin_object = include($this->pluginpath . $plugin . "/php/" . $plugin . ".php");
 
@@ -65,6 +100,12 @@ class BeaconAPI
         $beacon->path = $this->pluginpath . $plugin . "/";
         $beacon->url = $this->settings->url . $this->settings->php->pluginpath . $plugin . "/";
         $beacon->parser = new BeaconXSLTransformer();
+
+        if($alttemplate){
+          error_log("have alttemplate: " . $alttemplate);
+          error_log("current path: " . getcwd());
+          $xmlsource = file_get_contents($beacon->path . 'xml/' . $alttemplate);
+        }
 
         // Get the HTML
         $html = $plugin_object->newdoc($beacon, $xmlsource);

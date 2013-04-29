@@ -21,7 +21,8 @@
     margin: 2em 0; border: 1px solid rgba(0,0,0,0.1);
 }
 
-.BeaconTab {  }
+.BeaconTab p { clear: both; }
+.BeaconTab p small { color: #666; }
 .BeaconTab:after {
     content: ".";
     display: block;
@@ -89,7 +90,7 @@ ul.BeaconRightToolBar li:hover { border: 1px solid #79b7e7; background: #d0e5f5;
 a.BeaconButton {
     cursor: pointer;
     padding: 5px;
-    display: block;
+    float: left;
     margin: 5px 0px;
     border: 1px solid #a6c9e2;
 }
@@ -153,6 +154,8 @@ a.BeaconButton:hover {
     cursor: pointer;
     outline: none;
 }
+
+#BeaconDocumentList { clear: both; }
 
 .ui-dialog label,
 .ui-dialog input,

@@ -480,7 +480,7 @@ Beacon.prototype.initDoc = function(filename, id, action, plugin, source, alttem
 
             this.beacon.refreshDocumentList();
             
-            $("#"+id+"ToolsTab").tabs();
+            $("#"+obj.payload.id+"ToolsTab").tabs();
             
         }.attach(attached)
     });

@@ -102,8 +102,6 @@ class BeaconAPI
         $beacon->parser = new BeaconXSLTransformer();
 
         if($alttemplate){
-          error_log("have alttemplate: " . $alttemplate);
-          error_log("current path: " . getcwd());
           $xmlsource = file_get_contents($beacon->path . 'xml/' . $alttemplate);
         }
 

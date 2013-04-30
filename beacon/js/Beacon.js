@@ -102,7 +102,7 @@ Beacon.prototype.init = function() {
     var scripts = ["BeaconAPI.js",
                     "jquery.ui.js",
                     "jquery.hotkeys.js",
-                    "jquery.jgrowl.js",
+//                    "jquery.jgrowl.js",
                     "jquery.jstree.js",
                     "jquery.scrollTo.js"];
 
@@ -298,11 +298,11 @@ Beacon.prototype.newDoc = function() {
     filename = filename.replace(" ", "_");
 
     if (filetype === "-1") {
-        $.jGrowl(this.strings.messages["noFileType"]);
+        BeaconMessage.init(this.strings.messages["noFileType"]);
         flag = false;
     }
     if (filename.length === 0) {
-        $.jGrowl(this.strings.messages["noFileName"]);
+        BeaconMessage.init(this.strings.messages["noFileName"]);
         flag = false;
     }
 
@@ -312,7 +312,7 @@ Beacon.prototype.newDoc = function() {
     }
 
     if ((filename.indexOf(".")!= -1) && (filename.substring(filename.length - 4) !== ".xml")) {
-        $.jGrowl("Invalid File Name. Do NOT Give File Extension");
+        BeaconMessage.init("Invalid File Name. Do NOT Give File Extension");
         flag = false;
     }
 
@@ -347,9 +347,9 @@ Beacon.prototype.fetchDoc = function(e) {
 Beacon.prototype.uploadDoc = function(e) {
     var fname = $.trim($("#BeaconUploadName").val()),
         ftype = $.trim($("#BeaconUploadDocType").val());
-	$.jGrowl(fname);
+	BeaconMessage.init(fname);
 
-    //$.jGrowl(this.strings.messages[$(fname)]);
+    //BeaconMessage.init(this.strings.messages[$(fname)]);
 
     var id = Math.floor(Math.random() * 10001);
     //this.initDoc(fname, id, "fetchdoc", this.settings.plugins[ftype], furl);
@@ -364,7 +364,7 @@ Beacon.prototype.editDoc = function(e) {
     var id = obj.title;
 
     if (this.tabs[id]) {
-        $.jGrowl("You are already editing this document!");
+        BeaconMessage.init("You are already editing this document!");
         // Let's prevent default action and propagation
         if (e.preventDefault) e.preventDefault();
         if (e.stopPropagation) e.stopPropagation();
@@ -494,7 +494,7 @@ Beacon.prototype.deleteDoc = function(e) {
     var id = obj.title;
 
     if (this.tabs[id]) {
-        $.jGrowl("You are already editing this document! Close before deleting.");
+        BeaconMessage.init("You are already editing this document! Close before deleting.");
         // Let's prevent default action and propagation
         if (e.preventDefault) e.preventDefault();
         if (e.stopPropagation) e.stopPropagation();
@@ -560,6 +560,46 @@ Beacon.prototype.closeDoc = function(id) {
 
     $(this.container).tabs("remove", selected);
 };
+
+
+var BeaconMessage = {
+  
+  timeout: 1000,
+  
+  init: function(message){
+
+    this.message = message;
+    this.id = "id-"+new Date().getTime();
+    
+    this.build();
+    this.show();
+  },
+  
+  build: function(){
+    this.html = $( "<div title='System Message' id='" + this.id + "'><p>" + this.message + "</p></div>" );
+  },
+  
+  show: function(){
+    $(this.html).dialog({
+      modal: true,
+      open: this.open
+    });
+  },
+  
+  open: function(evt,ui){
+    setTimeout("BeaconMessage.kill('"+this.id+"')",BeaconMessage.timeout);
+  },
+  
+  kill: function(id){
+    $("#"+id).hide(200,function(){
+      $("#"+id).remove();
+      $(this).dialog("destroy");
+    });
+  }
+  
+  
+};
+
 
 /*
  * Beacon Plugin Manager

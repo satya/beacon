@@ -167,7 +167,7 @@ BeaconAPI.prototype.initEditor = function(o) {
 
     // If not found in DTD let's move on
     if (!nodeDef) {
-        //$.jGrowl("Not found in DTD!");
+        //BeaconMessage.init("Not found in DTD!");
         return false;
     }
 
@@ -298,19 +298,19 @@ BeaconAPI.prototype.buildInlineInsertMenu = function(nodeDef) {
 BeaconAPI.prototype.insertInline = function() {
   
     if (!this.state["editing"]) {
-        $.jGrowl("You are not editing anything!");
+        BeaconMessage.init("You are not editing anything!");
         return;
     }
 
     if (this.currentEditor.getType() !== "richtext") {
-        $.jGrowl("You cannot insert a node in non-richtext type editor.");
+        BeaconMessage.init("You cannot insert a node in non-richtext type editor.");
         return;
     }
 
     var val = $(this.ui["InsertInlineList"].id).val();
 
     if (val === "-1") {
-        $.jGrowl("Select something!");
+        BeaconMessage.init("Select something!");
         return;
     }
 
@@ -447,7 +447,7 @@ BeaconAPI.prototype.buildBlockInsertMenu = function(nodeDef) {
 
 BeaconAPI.prototype.insertBlock = function() {
     if (!this.state["editing"]) {
-        $.jGrowl("You are not editing anything!");
+        BeaconMessage.init("You are not editing anything!");
         return;
     }
 
@@ -456,7 +456,7 @@ BeaconAPI.prototype.insertBlock = function() {
     var position = $('input[name=insertAt]:checked').val();
 
     if (name === "-1") {
-        $.jGrowl("Select Something!");
+        BeaconMessage.init("Select Something!");
         return;
     }
 
@@ -525,7 +525,7 @@ BeaconAPI.prototype.buildNodeStructure = function(title) {
 BeaconAPI.prototype.closeDocument = function() {
   
     if (this.state["editing"]) {
-        $.jGrowl("Please finish editing before closing.");
+        BeaconMessage.init("Please finish editing before closing.");
         return;
     }
 
@@ -574,12 +574,12 @@ BeaconAPI.prototype.autoSave = function() {
 
 BeaconAPI.prototype.saveDocument = function() {
     if (this.state["fetchingSource"] || this.state["fetchingHTML"] || this.state["saving"]) {
-        $.jGrowl("Please Wait for the current operation to be completed!");
+        BeaconMessage.init("Please Wait for the current operation to be completed!");
         return;
     }
 
     if (this.state["editing"]) {
-        $.jGrowl("Please finish editing before saving.");
+        BeaconMessage.init("Please finish editing before saving.");
         return;
     }
 
@@ -602,7 +602,7 @@ BeaconAPI.prototype.saveDocument = function() {
         type: "POST",
         data: JSON.stringify(o),
         success: function(result) {
-            $.jGrowl("Save done!");
+            BeaconMessage.init("Save done!");
             this.state["saving"] = false;
         }.attach(this)
     });
@@ -618,7 +618,7 @@ BeaconAPI.prototype.viewChange = function(event, ui) {
         this.state["saving"] ||
         this.state["fetchingRevisions"]) {
 
-        $.jGrowl("Please let the current operation complete!");
+        BeaconMessage.init("Please let the current operation complete!");
         return false;
     }
 
@@ -647,7 +647,7 @@ BeaconAPI.prototype.viewChange = function(event, ui) {
 
 // Emergency Restore Function
 BeaconAPI.prototype.restoreDocument = function() {
-    $.jGrowl("The server could not parse! Restoring back to last known stable document.");
+    BeaconMessage.init("The server could not parse! Restoring back to last known stable document.");
 
     document.getElementById(this.id+"Iframe").contentWindow.document.body.innerHTML = this.html;
 
@@ -668,7 +668,7 @@ BeaconAPI.prototype.restoreDocument = function() {
 
 // Emergency Restore Function
 BeaconAPI.prototype.restoreSourceView = function() {
-    $.jGrowl("The server could not parse the XML! Please check for any formatting errors. \
+    BeaconMessage.init("The server could not parse the XML! Please check for any formatting errors. \
     Restoring back to last known stable document.");
 
     $(this.ui["TextBox"].id).val(this.src);
@@ -832,7 +832,7 @@ BeaconAPI.prototype.getRevisions = function() {
             this.revisions = json.revisions;
 
             if (json.revisions.length === 0) {
-                $.jGrowl("No Revisions Found!");
+                BeaconMessage.init("No Revisions Found!");
                 this.state["fetchingRevisions"] = false;
 
                 $(this.ui["RevisionsViewLoading"].id).hide();
@@ -940,7 +940,7 @@ BeaconAPI.prototype.buildTree = function() {
                         var val = $("#" + this.api.id + "nodeInsertBefore").val();
 
                         if (val === "-1") {
-                            $.jGrowl("Select something!");
+                            BeaconMessage.init("Select something!");
                             return;
                         }
 
@@ -1028,7 +1028,7 @@ BeaconAPI.prototype.buildTree = function() {
                         var val = $("#" + this.api.id + "nodeInsertAfter").val();
 
                         if (val === "-1") {
-                            $.jGrowl("Select something!");
+                            BeaconMessage.init("Select something!");
                             return;
                         }
 
@@ -1098,7 +1098,7 @@ BeaconAPI.prototype.buildTree = function() {
                      var id = node.attr("id");
 
                      if (!this.tree[id]) {
-                         $.jGrowl("Boohoo! Something b0rked. :( Blame the devs...");
+                         BeaconMessage.init("Boohoo! Something b0rked. :( Blame the devs...");
                          return;
                      }
 

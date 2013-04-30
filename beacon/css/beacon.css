@@ -155,6 +155,9 @@ a.BeaconButton:hover {
     outline: none;
 }
 
+.RevisionContainer { border-right: 1px dashed #A6C9E2; }
+.RevisionList { float: left; clear: both; margin-top: 1em; }
+
 #BeaconDocumentList { clear: both; }
 
 .ui-dialog label,

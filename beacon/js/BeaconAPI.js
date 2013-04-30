@@ -551,6 +551,7 @@ BeaconAPI.prototype.closeDocument = function() {
       }
     });
   
+  return false;
   /*
     if (confirm("Do you want to save the current changes?")) {
         this.saveDocument();
@@ -606,6 +607,7 @@ BeaconAPI.prototype.saveDocument = function() {
             this.state["saving"] = false;
         }.attach(this)
     });
+    return false;
 };
 
 

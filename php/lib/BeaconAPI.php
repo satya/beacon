@@ -247,7 +247,7 @@ class BeaconAPI
             error_log("Save document done.", 1, "/var/log/feeds-reader/log");
             return "DONE";
         } else {
-            error_log("could not sve document", 3, "/var/log/feeds-reader/log");
+            error_log("could not save document", 3, "/var/log/feeds-reader/log");
             return "FAIL";
         }
     }

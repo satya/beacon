@@ -721,7 +721,7 @@ BeaconAPI.prototype.getSource = function(displayFlag) {
                 this.restoreDocument();
                 return;
             }
-            src = decodeURIComponent(src);
+            src = decodeURIComponent(src.replace(/%/g,"%25"));
 
             this.state["fetchingSource"] = false;
             this.src = src;
@@ -767,7 +767,7 @@ BeaconAPI.prototype.getHTML = function(displayFlag) {
                 this.restoreSourceView();
                 return;
             }
-            html = decodeURIComponent(html);
+            html = decodeURIComponent(html.replace(/%/g,"%25"));
 
             this.state["fetchingHTML"] = false;
 

@@ -74,6 +74,9 @@ class BeaconMySQL implements BeaconStorage
 
         $old_src = mysql_result($result, 0, "source");
         $old_html = mysql_result($result, 0, "html");
+        
+        $source = mysql_real_escape_string($source);
+        $html = mysql_real_escape_string($html);
 
         $result = @mysql_query("UPDATE beacon_documents
                                 SET `source`='$source', `html`='$html'

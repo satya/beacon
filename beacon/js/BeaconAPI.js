@@ -1318,7 +1318,7 @@ function getNodeId(documentId,elementPath){
       var regex = /[\w]+/g;
       var matches = nextElement.match(regex);
       
-      if(matches.length>0){
+      if(matches!== null && matches.length>0){
         
         var elementName = "";
         var elementIndex = 0;

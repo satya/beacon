@@ -626,6 +626,12 @@ BeaconAPI.prototype.viewChange = function(event, ui) {
 
     var index = ui.index;
 
+    // seizing this opportunity to correct problems with non-breaking
+    // spaces that sometimes occur when copying and pasting XML
+    var fixedHTML = $(this.ui["Iframe"].id).contents().find("body").html();
+    fixedHTML = fixedHTML.replace(/\u00a0/g," ").replace(/&nbsp;/g," ");
+    $(this.ui["Iframe"].id).contents().find("body").html(fixedHTML)
+
     switch(index) {
         case 0:
             if (this.tabIndex === 1)

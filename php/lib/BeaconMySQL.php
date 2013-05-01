@@ -75,6 +75,9 @@ class BeaconMySQL implements BeaconStorage
         $old_src = mysql_result($result, 0, "source");
         $old_html = mysql_result($result, 0, "html");
         
+        $old_src = mysql_real_escape_string($old_src);
+        $old_html = mysql_real_escape_string($old_html);
+        
         $source = mysql_real_escape_string($source);
         $html = mysql_real_escape_string($html);
 

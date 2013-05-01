@@ -82,6 +82,10 @@ var BeaconAPI = function(o, beacon) {
 
         // Let us attach the events
         $(this.ui["SaveButton"].id).bind("click", this.saveDocument.attach(this));
+        
+        $(this.ui["CustomCommand1"].id).bind("click", this.customCommand.attach(this));
+        $(this.ui["CustomCommand2"].id).bind("click", this.customCommand.attach(this));
+        $(this.ui["CustomCommand3"].id).bind("click", this.customCommand.attach(this));
 
         // window.setInterval(this.autoSave.attach(this), 300000);
 
@@ -103,9 +107,37 @@ var BeaconAPI = function(o, beacon) {
     }.attach(this));
 };
 
+BeaconAPI.prototype.customCommand = function(evt) {
+  
+    evt.preventDefault();
+  
+    var customCommandId = $($(evt.target).parent()).attr("id").replace(this.id,"");
+    var customCommandName = $($(evt.target).parent()).attr("title");
+  
+    var o = {
+        action: "customCommand",
+        payload: {
+            id: this.id,
+            plugin: this.plugin,
+            customCommandId: customCommandId
+        }
+    };
+  
+    $.ajax({
+        url: this.beacon.getURL("handler"),
+        type: "POST",
+        data: JSON.stringify(o),
+        success: function(result) {
+            $("<div title='" + customCommandName + " complete!'>"+result+"</div>").dialog({modal:true});
+        }.attach(this)
+    });
+  
+}
+
 BeaconAPI.prototype.getUIList = function() {
     var list = ["Document", "Content", "Sidebar", "RightToolBar", "Accordion",
               "ToolHolder", "Iframe", "SourceView", "CloseButton", "SaveButton",
+              "CustomCommand1","CustomCommand2","CustomCommand3",
               "ViewSourceButton", "DownloadButton", "TimeStamp", "Loading",
               "InsertInlineButton", "InsertInlineList", "BeaconTreeContainer",
               "TextBox", "RevisionsView", "TabList", "DesignViewLoading",
@@ -522,7 +554,9 @@ BeaconAPI.prototype.buildNodeStructure = function(title) {
 
 // --------------------- Save and close Functions ------------------------------
 
-BeaconAPI.prototype.closeDocument = function() {
+BeaconAPI.prototype.closeDocument = function(evt) {
+  
+    evt.preventDefault();
   
     if (this.state["editing"]) {
         BeaconMessage.init("Please finish editing before closing.");
@@ -551,14 +585,6 @@ BeaconAPI.prototype.closeDocument = function() {
       }
     });
   
-  return false;
-  /*
-    if (confirm("Do you want to save the current changes?")) {
-        this.saveDocument();
-    }
-  */
-
-    //this.beacon.closeDoc(this.id);
 };
 
 BeaconAPI.prototype.autoSave = function() {
@@ -573,7 +599,8 @@ BeaconAPI.prototype.autoSave = function() {
     this.saveDocument();
 };
 
-BeaconAPI.prototype.saveDocument = function() {
+BeaconAPI.prototype.saveDocument = function(evt) {
+    evt.preventDefault();
     if (this.state["fetchingSource"] || this.state["fetchingHTML"] || this.state["saving"]) {
         BeaconMessage.init("Please Wait for the current operation to be completed!");
         return;
@@ -607,7 +634,6 @@ BeaconAPI.prototype.saveDocument = function() {
             this.state["saving"] = false;
         }.attach(this)
     });
-    return false;
 };
 
 

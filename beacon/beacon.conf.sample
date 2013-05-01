@@ -129,7 +129,31 @@
 
     // Method of storage to be used
     // Currently only flatfile is used
-    "storage": "flatfile"
+    "storage": "flatfile",
+    
+    // 3 Custom commands
+    "customCommands": {
+        "CustomCommand1": {
+          "enabled": 0,
+          // icon value is used with jQuery UI icon classes
+          // as "ui-icon-script", for example
+          "icon": "script",
+          "name": "Custom Script 1",
+          "command": "/bin/ls"
+        },
+        "CustomCommand2": {
+          "enabled": 0,
+          "icon": "script",
+          "name": "Custom Script 2",
+          "command": "/bin/ls"
+        },
+        "CustomCommand3": {
+          "enabled": 0,
+          "icon": "script",
+          "name": "Custom Script 3",
+          "command": "/bin/ls"
+        }
+    }
 }
 
 

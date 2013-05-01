@@ -136,6 +136,58 @@ class BeaconAPI
         return json_encode($response);
     }
 
+    function customCommands() {
+     
+      $id = $this->request->payload->id;
+     
+      $html = "";
+      
+      foreach($this->settings->customCommands as $customCommandId => $customCommand){
+        if(intval($customCommand->enabled)===1){
+          $html .= "<li class='ui-state-default ui-corner-all BeaconCustomCommand'>\n";
+          $html .= "<a id='" . $id . $customCommandId . "' href='#' title='" . $customCommand->name . "'>";
+          $html .= "<span class='ui-icon ui-icon-" . $customCommand->icon . "'></span>";
+          $html .= "</a>\n";
+          $html .= "</li>\n\n";
+        }
+      }
+      
+      return $html;
+      
+    }
+
+    function customCommand() {
+        $id = $this->request->payload->id;
+        $customCommandId = $this->request->payload->customCommandId;
+        $customCommand = $this->settings->customCommands->{$customCommandId}->command;
+        
+        $tempXML = '/tmp/beacon-temp-file.xml';
+        
+        // dumping this document to a temporary XML file
+        $obj = $this->db->fetch_document($id);
+        $source = $obj['source'];
+        file_put_contents($tempXML,$source);
+        
+        $arguments = $tempXML;
+        $commandString = $customCommand . ' ' . $arguments;
+        
+        $out = array();
+        $status = -1;
+
+        exec($commandString, $out, $status);
+
+        if($status!=0) {
+            // shell script indicated an error return
+            return "ERROR " . $status . " with command '" . $commandString . "', id = " . $customCommandId;
+        }
+        
+        $returnVal = implode("\r\n",$out);
+        error_log($returnVal);
+        
+        return $returnVal;
+        
+    }
+
     function editdoc() {
         // Check which plugin it is
         $id = $this->request->payload->id;
@@ -150,6 +202,7 @@ class BeaconAPI
         $ui = str_replace("{id}", $id, $ui);
         $ui = str_replace("{src}", $url, $ui);
         $ui = str_replace("{imgpath}", $this->settings->url . $this->settings->php->imagepath, $ui);
+        $ui = str_replace("{customcommands}",$this->customCommands(),$ui);
 
         // Build the object
         $response['result'] = "success";

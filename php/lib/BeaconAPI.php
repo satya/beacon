@@ -126,6 +126,7 @@ class BeaconAPI
         $ui = str_replace("{id}", $id, $ui);
         $ui = str_replace("{src}", $url, $ui);
         $ui = str_replace("{imgpath}", $this->settings->url . $this->settings->php->imagepath, $ui);
+        $ui = str_replace("{customcommands}",$this->customCommands(),$ui);
 
         // Build the object
         $response['result'] = "success";

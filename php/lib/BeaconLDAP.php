@@ -29,7 +29,7 @@ class BeaconLDAP
       $authUser = FALSE;
       
       if($this->require_group){
-        $authUser = $adldap->user()->authenticate($username, $password) && $adldap->user()->inGroup($username,$this->required_group);
+        $authUser = $this->adldap->user()->authenticate($username, $password) && $this->adldap->user()->inGroup($username,$this->required_group);
       }else{
         $authUser = $this->adldap->user()->authenticate($username, $password);
       }

@@ -192,4 +192,4 @@ echo $storage
 sed 's/"storage": "flatfile"/"storage": "'${storage}'"/' beacon.conf > $TMP
 cat $TMP > beacon.conf
 
-
+echo "To add custom commands, manually edit the beacon.conf file before running make install"

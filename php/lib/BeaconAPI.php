@@ -182,7 +182,7 @@ class BeaconAPI
         }
         
         $returnVal = implode("\r\n",$out);
-        error_log($returnVal);
+        //error_log($returnVal);
         
         return $returnVal;
         

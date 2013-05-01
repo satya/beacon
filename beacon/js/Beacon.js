@@ -295,7 +295,7 @@ Beacon.prototype.newDoc = function() {
         id = 0,
         container = "";
 
-    filename = filename.replace(" ", "_");
+    filename = filename.replace(/ /g, "_");
 
     if (filetype === "-1") {
         BeaconMessage.init(this.strings.messages["noFileType"]);

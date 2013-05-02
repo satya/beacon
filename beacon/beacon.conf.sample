@@ -19,6 +19,9 @@
     // Possible options: php, python
     "backend": "php",
 
+    // If TRUE, all users share all documents
+    "sharedDocuments": "FALSE",
+
     // All PHP related settings
     // These are mostly used by javascript
     "php": {

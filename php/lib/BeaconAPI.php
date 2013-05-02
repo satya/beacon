@@ -70,8 +70,12 @@ class BeaconAPI
     function getdoclist() {
         $text = "";
         $i = 0;
-
-        $documents = $this->db->user_documents($_SESSION['auth_username']);
+        
+        if($this->settings->sharedDocuments===TRUE || $this->settings->sharedDocuments==="TRUE"){
+          $documents = $this->db->all_documents();
+        }else{
+          $documents = $this->db->user_documents($_SESSION['auth_username']);
+        }
 
         while ($i < count($documents)) {
             $text .= '<tr style="padding: 9px">';

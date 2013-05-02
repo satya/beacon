@@ -165,6 +165,33 @@ class BeaconMySQL implements BeaconStorage
         return $arr;
     }
 
+    // Fetch All Documents
+    public function all_documents()
+    {
+        $result = @mysql_query("SELECT * FROM beacon_documents");
+
+        $i = 0;
+        $arr = array();
+
+        if(mysql_num_rows($result) > 0) {
+            while ($i < mysql_num_rows($result)) {
+                $document['id'] = mysql_result($result, $i, "id");
+                $document['name'] = mysql_result($result, $i, "name");
+                $document['username'] = mysql_result($result, $i, "username");
+                $document['source'] = mysql_result($result, $i, "source");
+                $document['html'] = mysql_result($result, $i, "html");
+                $document['created'] = mysql_result($result, $i, "created");
+                $document['plugin'] = mysql_result($result, $i, "plugin");
+
+                $arr[$i] = $document;
+
+                $i++;
+            }
+        }
+
+        return $arr;
+    }
+
     // Fetch User Documents
     public function user_documents($user)
     {

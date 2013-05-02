@@ -112,7 +112,8 @@ BeaconAPI.prototype.customCommand = function(evt) {
     evt.preventDefault();
   
     var customCommandId = $($(evt.target).parent()).attr("id").replace(this.id,"");
-    var customCommandName = $($(evt.target).parent()).attr("title");
+    var customCommandName = beacon.settings.customCommands[customCommandId].name;
+  
   
     var o = {
         action: "customCommand",
@@ -123,14 +124,83 @@ BeaconAPI.prototype.customCommand = function(evt) {
         }
     };
   
-    $.ajax({
-        url: this.beacon.getURL("handler"),
-        type: "POST",
-        data: JSON.stringify(o),
-        success: function(result) {
-            $("<div title='" + customCommandName + " complete!'>"+result+"</div>").dialog({modal:true});
-        }.attach(this)
-    });
+    // if there are arguments in the conf file for this command, use a
+    // dialog to get argument values from user
+    if(beacon.settings.customCommands[customCommandId].arguments.length>0){
+
+        var promptFields = "";
+
+        for(var k in beacon.settings.customCommands[customCommandId].arguments){
+            var promptName = beacon.settings.customCommands[customCommandId].arguments[k];
+            promptFields += "<label for='" + promptName + "'>" + promptName + "</label>";
+            promptFields += "<input type='text' name='" + promptName + "' id='" + promptName + "' class='text ui-widget-content ui-corner-all' />";
+        }
+        
+        var promptDialog = $("<div class='prompt-dialog' title='Arguments for " + customCommandName + "'><p class='validateTips'>All form fields are required.</p><form><fieldset>" + promptFields + "</fieldset></form></div>");
+        
+        var thisParent = this;
+        
+        
+        $(promptDialog).dialog({
+          autoOpen: false,
+          draggable: true,
+          height: 300,
+          width: 350,
+          modal: true,
+          buttons: {
+            Execute: function() {
+              var bValid = true;
+              if ( bValid ) {
+                
+                var formValues = $($(promptDialog).find("form")[0]).serializeArray();
+                
+                var arguments = new Array();
+                
+                for(var k in formValues){
+                  var formValue = formValues[k];
+                  arguments.push(formValue.value);
+                }
+                
+                $( this ).dialog( "close" );
+                
+                o.payload.arguments = arguments;
+                
+                
+                $.ajax({
+                    url: thisParent.beacon.getURL("handler"),
+                    type: "POST",
+                    data: JSON.stringify(o),
+                    success: function(result) {
+                        $("<div title='" + customCommandName + " complete!'>"+result+"</div>").dialog({modal:true});
+                    }.attach(thisParent)
+                });
+                
+                
+                
+              }
+            }
+          }
+        });
+        
+        $(promptDialog).dialog("open");
+      
+      
+    }else{
+      
+        $.ajax({
+            url: this.beacon.getURL("handler"),
+            type: "POST",
+            data: JSON.stringify(o),
+            success: function(result) {
+                $("<div title='" + customCommandName + " complete!'>"+result+"</div>").dialog({modal:true});
+            }.attach(this)
+        });
+      
+    }
+  
+
+  
+
   
 }
 

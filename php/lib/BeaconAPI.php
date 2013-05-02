@@ -160,6 +160,7 @@ class BeaconAPI
     function customCommand() {
         $id = $this->request->payload->id;
         $customCommandId = $this->request->payload->customCommandId;
+        $userArguments = implode(" ",$this->request->payload->arguments);
         $customCommand = $this->settings->customCommands->{$customCommandId}->command;
         
         $tempXML = '/tmp/beacon-temp-file.xml';
@@ -169,7 +170,7 @@ class BeaconAPI
         $source = $obj['source'];
         file_put_contents($tempXML,$source);
         
-        $arguments = $tempXML;
+        $arguments = $tempXML . ' ' . $userArguments;
         $commandString = $customCommand . ' ' . $arguments;
         
         $out = array();

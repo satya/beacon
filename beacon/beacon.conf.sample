@@ -139,19 +139,22 @@
           // as "ui-icon-script", for example
           "icon": "script",
           "name": "Custom Script 1",
-          "command": "/bin/ls"
+          "command": "/bin/ls",
+          "arguments": [ ]
         },
         "CustomCommand2": {
           "enabled": 0,
           "icon": "script",
           "name": "Custom Script 2",
-          "command": "/bin/ls"
+          "command": "/bin/ls",
+          "arguments": [ ]
         },
         "CustomCommand3": {
           "enabled": 0,
           "icon": "script",
           "name": "Custom Script 3",
-          "command": "/bin/ls"
+          "command": "/bin/ls",
+          "arguments": [ ]
         }
     }
 }

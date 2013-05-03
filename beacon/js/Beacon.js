@@ -178,14 +178,18 @@ Beacon.prototype.init = function() {
             $("#BeaconConfigLanguage").html(this.settings.language);
             $("#BeaconConfigTheme").html(this.settings.theme);
 
-            $("#BeaconNewDocumentMenu").find("select[id$=template]:first-child").hide();
-
             $("#BeaconNewDocType").change(function(evt){
               var selectedType = $.trim($(evt.target).find("option:selected").text());
-              $("#BeaconNewDocumentMenu").find("select[id$=template]").hide(100,function(){
+              $("#BeaconNewDocumentMenu").find("select[id$=template]").hide(10,function(){
                 $("#" + selectedType + "-template").show();
               });
             });
+
+
+            var selectedType = $.trim($(evt.target).find("option:selected").text());
+            $("#BeaconNewDocumentMenu").find("select[id$=template]").hide();
+            $("#" + selectedType + "-template").show();
+
 
             resizeDocuments();
 

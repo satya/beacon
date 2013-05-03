@@ -111,7 +111,15 @@ BeaconAPI.prototype.customCommand = function(evt) {
   
     evt.preventDefault();
   
-    var customCommandId = $($(evt.target).parent()).attr("id").replace(this.id,"");
+    var customCommandId = null;
+  
+    if($(evt.target).attr("tagName")==="SPAN"){
+      customCommandId = $($(evt.target).parent()).attr("id").replace(this.id,"");
+    }else{
+      customCommandId = $(evt.target).attr("id").replace(this.id,"");
+    }
+  
+    
     var customCommandName = beacon.settings.customCommands[customCommandId].name;
   
   

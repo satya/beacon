@@ -740,8 +740,10 @@ BeaconAPI.prototype.viewChange = function(event, ui) {
         case 0:
             if (this.tabIndex === 1)
                 this.getHTML();
-            else if (this.tabIndex === 2)
+            else if (this.tabIndex === 2){
+              this.selectionEvents();
                 this.buildTree();
+              }
             break;
 
         case 1:

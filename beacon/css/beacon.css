@@ -80,11 +80,16 @@
     border: 1px solid #a6c9e2;
 }
 
-ul.BeaconRightToolBar {margin: 0; padding: 0;}
-ul.BeaconRightToolBar li {margin: 2px; position: relative; padding: 4px 0; cursor: pointer; float: right;  list-style: none;}
-ul.BeaconRightToolBar span.ui-icon {float: left; margin: 0 4px;}
 
+ul.BeaconRightToolBar {  }
+ul.BeaconRightToolBar li { margin: 2px; position: relative; float: right;  list-style: none;}
+ul.BeaconRightToolBar li a { float: left; }
+ul.BeaconRightToolBar li a:hover { background-color: #d0e5f5; }
+ul.BeaconRightToolBar span.ui-icon { float: left; margin: 4px; cursor: pointer; }
+/*
 ul.BeaconRightToolBar li:hover { border: 1px solid #79b7e7; background: #d0e5f5; font-weight: bold; color: #1d5987; outline: none; }
+*/
+
 
 
 a.BeaconButton {
@@ -164,3 +169,5 @@ a.BeaconButton:hover {
 .ui-dialog input,
 .ui-dialog select { margin: 1em; }
 .tree .ltr li a, .tree .rtl li a { margin: 0.2em; }
+
+

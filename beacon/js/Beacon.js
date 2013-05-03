@@ -186,7 +186,7 @@ Beacon.prototype.init = function() {
             });
 
 
-            var selectedType = $.trim($(evt.target).find("option:selected").text());
+            var selectedType = $.trim($("#BeaconNewDocType").find("option:selected").text());
             $("#BeaconNewDocumentMenu").find("select[id$=template]").hide();
             $("#" + selectedType + "-template").show();
 

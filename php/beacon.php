@@ -49,7 +49,7 @@ if (!$auth->check_session()) {
 
         <!-- Required by Beacon -->
 
-        <link rel="stylesheet" href="../beacon/css/jquery.jgrowl.css" type="text/css" />
+        <!-- <link rel="stylesheet" href="../beacon/css/jquery.jgrowl.css" type="text/css" /> -->
         <link rel="stylesheet" href="../beacon/css/jquery.tree.css" type="text/css" />
         <!-- Will be loaded by the theme selected in conf file -->
         <link rel="stylesheet" href="../beacon/css/<?php echo $request->theme; ?>/jquery.ui.css" type="text/css" />

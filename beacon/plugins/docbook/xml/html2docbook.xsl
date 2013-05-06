@@ -53,6 +53,50 @@
     </title>
 </xsl:template>
 
+<xsl:template match="table[@title='docbookInformaltable']">
+    <informaltable title="docbookInformaltable" tabstyle="{@tabstyle}" frame="{@frame}">
+      <tgroup cols="{@cols}">
+        <xsl:apply-templates />
+      </tgroup>
+    </informaltable>
+</xsl:template>
+
+<xsl:template match="tbody">
+    <tbody>
+        <xsl:apply-templates />
+    </tbody>
+</xsl:template>
+
+<xsl:template match="tr[not(@class='thead')]">
+    <row rowsep="{@rowsep}">
+        <xsl:apply-templates />
+    </row>
+</xsl:template>
+
+<xsl:template match="tr[@class='thead']">
+        <xsl:apply-templates />
+</xsl:template>
+
+
+<xsl:template match="td">
+    <entry>
+        <xsl:apply-templates />
+    </entry>
+</xsl:template>
+
+<xsl:template match="thead">
+    <xsl:apply-templates />
+</xsl:template>
+
+
+<xsl:template match="th[@colname]">
+    <colspec colname="{@colname}" colsep="{@colsep}" colwidth="{@colwidth}" />
+</xsl:template>
+
+
+
+
+
 <xsl:template match="p[@title='docbookPara']">
     <para>
         <xsl:apply-templates />

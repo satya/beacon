@@ -64,6 +64,49 @@
 <xsl:template match="title">
 </xsl:template>
 
+<xsl:template match="informaltable">
+
+    <xsl:variable name="colsval">
+      <xsl:value-of select="tgroup//@cols"/>
+    </xsl:variable>
+  
+    <table title="docbookInformaltable" tabstyle="{@tabstyle}" frame="{@frame}" cols="{$colsval}">
+      
+      <!-- must use thead instead of colgroup & col due to rendering issues with colgroup -->
+      <thead>
+        <tr class='thead'>
+          <xsl:apply-templates select="./tgroup/colspec" />
+        </tr>
+      </thead>
+      
+        <xsl:apply-templates select="./tgroup/tbody" />
+    </table>
+</xsl:template>
+
+<xsl:template match="tbody" name="tbody">
+    <tbody>
+        <xsl:apply-templates />
+    </tbody>
+</xsl:template>
+
+<xsl:template match="row">
+    <tr rowsep="{@rowsep}">
+        <xsl:apply-templates />
+    </tr>
+</xsl:template>
+
+<xsl:template match="entry">
+    <td>
+        <xsl:apply-templates />
+    </td>
+</xsl:template>
+
+<xsl:template match="colspec">
+    <th colname="{@colname}" colsep="{@colsep}" colwidth="{@colwidth}"></th>
+</xsl:template>
+
+
+
 <xsl:template match="para">
     <p title="docbookPara">
         <xsl:apply-templates />

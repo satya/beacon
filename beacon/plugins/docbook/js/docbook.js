@@ -83,6 +83,56 @@ function docbook_dtd() {
             }
         },
 
+        docbookAddress: {
+            type: "block",
+            editorType: "lineedit",
+            markup: {
+                tag: "p",
+                attributes: false,
+                sampleText: "Sample Address"
+            }
+        },
+
+        docbookStreet: {
+            type: "block",
+            editorType: "lineedit",
+            markup: {
+                tag: "p",
+                attributes: false,
+                sampleText: "Sample Street"
+            }
+        },
+
+        docbookCity: {
+            type: "block",
+            editorType: "lineedit",
+            markup: {
+                tag: "p",
+                attributes: false,
+                sampleText: "Sample City"
+            }
+        },
+
+        docbookState: {
+            type: "block",
+            editorType: "lineedit",
+            markup: {
+                tag: "p",
+                attributes: false,
+                sampleText: "Sample State"
+            }
+        },
+
+        docbookPostcode: {
+            type: "block",
+            editorType: "lineedit",
+            markup: {
+                tag: "p",
+                attributes: false,
+                sampleText: "Sample Postcode"
+            }
+        },
+
         docbookPara: {
             type: "block",
             inlineChildren: common.inlineChildren,

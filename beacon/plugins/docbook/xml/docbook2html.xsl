@@ -105,6 +105,36 @@
     <th colname="{@colname}" colsep="{@colsep}" colwidth="{@colwidth}"></th>
 </xsl:template>
 
+<xsl:template match="street">
+    <p title="docbookStreet">
+        <xsl:apply-templates />
+    </p>
+</xsl:template>
+
+<xsl:template match="city">
+    <p title="docbookCity">
+        <xsl:apply-templates />
+    </p>
+</xsl:template>
+
+<xsl:template match="state">
+    <p title="docbookState">
+        <xsl:apply-templates />
+    </p>
+</xsl:template>
+
+<xsl:template match="postcode">
+    <p title="docbookPostcode">
+        <xsl:apply-templates />
+    </p>
+</xsl:template>
+
+<xsl:template match="address">
+    <p title="docbookAddress">
+        <xsl:apply-templates />
+    </p>
+</xsl:template>
+
 
 
 <xsl:template match="para">

@@ -93,7 +93,35 @@
     <colspec colname="{@colname}" colsep="{@colsep}" colwidth="{@colwidth}" />
 </xsl:template>
 
+<xsl:template match="p[@title='docbookStreet']">
+    <street>
+        <xsl:apply-templates />
+    </street>
+</xsl:template>
 
+<xsl:template match="p[@title='docbookCity']">
+    <city>
+        <xsl:apply-templates />
+    </city>
+</xsl:template>
+
+<xsl:template match="p[@title='docbookState']">
+    <state>
+        <xsl:apply-templates />
+    </state>
+</xsl:template>
+
+<xsl:template match="p[@title='docbookPostcode']">
+    <postcode>
+        <xsl:apply-templates />
+    </postcode>
+</xsl:template>
+
+<xsl:template match="p[@title='docbookAddress']">
+    <address>
+        <xsl:apply-templates />
+    </address>
+</xsl:template>
 
 
 

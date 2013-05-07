@@ -40,6 +40,7 @@ function docbook_dtd() {
       "docbookOrderedList",
       "docbookProcedure",
       "docbookPara",
+      "docbookTable",
       "docbookNote",
       "docbookWarning",
       "docbookImportant"
@@ -143,6 +144,52 @@ function docbook_dtd() {
                 tag: "p",
                 attributes: false,
                 sampleText: "This is a sample paragraph."
+            }
+        },
+
+        docbookTable: {
+            type: "block",
+            siblings: common.blockSiblings,
+            markup: {
+                tag: "table",
+                attributes: { tabstyle: "striped", frame:"all"},
+                requiredChildNodes: ["docbookThead","docbookTbody"]
+            }
+        },
+        
+        docbookThead: {
+            type: "block",
+            markup: {
+                tag: "thead",
+                attributes: false,
+                requiredChildNodes: ["docbookRow"]
+            }
+        },
+
+        docbookTbody: {
+            type: "block",
+            markup: {
+                tag: "tbody",
+                attributes: false,
+                requiredChildNodes: ["docbookRow","docbookRow"]
+            }
+        },
+        
+        docbookRow: {
+            type: "block",
+            markup: {
+                tag: "tr",
+                attributes: false,
+                requiredChildNodes: ["docbookEntry","docbookEntry","docbookEntry"]
+            }
+        },
+
+        docbookEntry: {
+            type: "block",
+            markup: {
+                tag: "td",
+                attributes: false,
+                requiredChildNodes: ["docbookPara"]
             }
         },
 

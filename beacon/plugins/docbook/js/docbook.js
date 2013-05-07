@@ -152,7 +152,7 @@ function docbook_dtd() {
             siblings: common.blockSiblings,
             markup: {
                 tag: "table",
-                attributes: { tabstyle: "striped", frame:"all"},
+                attributes: { tabstyle: "striped", frame:"all", cols: "3"},
                 requiredChildNodes: ["docbookThead","docbookTbody"]
             }
         },

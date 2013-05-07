@@ -71,15 +71,7 @@
     </xsl:variable>
   
     <table title="docbookInformaltable" tabstyle="{@tabstyle}" frame="{@frame}" cols="{$colsval}">
-      
-      <!-- must use thead instead of colgroup & col due to rendering issues with colgroup -->
-      <thead>
-        <tr class='thead'>
-          <xsl:apply-templates select="./tgroup/colspec" />
-        </tr>
-      </thead>
-      
-        <xsl:apply-templates select="./tgroup/tbody" />
+      <xsl:apply-templates />
     </table>
 </xsl:template>
 
@@ -90,38 +82,45 @@
     </xsl:variable>
   
     <table title="docbookTable" tabstyle="{@tabstyle}" frame="{@frame}" cols="{$colsval}">
-      
-      <!-- must use thead instead of colgroup & col due to rendering issues with colgroup -->
-      <thead>
-        <tr class='thead'>
-          <xsl:apply-templates select="./tgroup/colspec" />
-        </tr>
-      </thead>
-      
-        <xsl:apply-templates select="./tgroup/tbody" />
+      <xsl:apply-templates />
     </table>
 </xsl:template>
 
 <xsl:template match="tbody" name="tbody">
-    <tbody>
+    <tbody title='docbookTbody'>
         <xsl:apply-templates />
     </tbody>
 </xsl:template>
 
+<xsl:template match="thead" name="thead">
+    <thead title='docbookThead'>
+      <tr title='docbookRow'>
+        <xsl:apply-templates select="./row/entry" name="th" />
+      </tr>
+    </thead>
+</xsl:template>
+
 <xsl:template match="row">
-    <tr rowsep="{@rowsep}">
+    <tr rowsep="{@rowsep}" title='docbookRow'>
         <xsl:apply-templates />
     </tr>
 </xsl:template>
 
 <xsl:template match="entry">
-    <td>
+    <td title='docbookEntry'>
         <xsl:apply-templates />
     </td>
 </xsl:template>
 
+<xsl:template match="//thead/row/entry" name="th">
+    <th title='docbookEntry'>
+        <xsl:apply-templates />
+    </th>
+</xsl:template>
+
+
 <xsl:template match="colspec">
-    <th colname="{@colname}" colsep="{@colsep}" colwidth="{@colwidth}"></th>
+  <caption colname="{@colname}" colsep="{@colsep}" colwidth="{@colwidth}"></caption>
 </xsl:template>
 
 <xsl:template match="street">

@@ -86,20 +86,23 @@
 </xsl:template>
 
 
-<xsl:template match="td">
+<xsl:template match="td|th">
     <entry>
         <xsl:apply-templates />
     </entry>
 </xsl:template>
 
 <xsl:template match="thead">
+  <thead>
     <xsl:apply-templates />
+  </thead>
 </xsl:template>
 
 
-<xsl:template match="th[@colname]">
+<xsl:template match="caption[@colname]">
     <colspec colname="{@colname}" colsep="{@colsep}" colwidth="{@colwidth}" />
 </xsl:template>
+
 
 <xsl:template match="p[@title='docbookStreet']">
     <street>

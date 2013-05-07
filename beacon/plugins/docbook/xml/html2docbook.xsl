@@ -124,7 +124,7 @@
 </xsl:template>
 
 <xsl:template match="p[@title='docbookPostcode']">
-    <xsl:text>&#160;</xsl:text>
+    <xsl:text> </xsl:text>
     <postcode>
         <xsl:apply-templates />
     </postcode>

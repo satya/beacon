@@ -105,6 +105,7 @@
     <street>
         <xsl:apply-templates />
     </street>
+    <xsl:text>&#10;</xsl:text>
 </xsl:template>
 
 <xsl:template match="p[@title='docbookCity']">
@@ -120,12 +121,23 @@
 </xsl:template>
 
 <xsl:template match="p[@title='docbookPostcode']">
+    <xsl:text>&#160;</xsl:text>
     <postcode>
         <xsl:apply-templates />
     </postcode>
+    <xsl:text>&#10;</xsl:text>
 </xsl:template>
 
-<xsl:template match="p[@title='docbookAddress']">
+<xsl:template match="p[@title='docbookAffiliation']">
+    <xsl:text>&#10;</xsl:text>
+    <affiliation>
+        <xsl:apply-templates />
+    </affiliation>
+    <xsl:text>&#10;</xsl:text>
+</xsl:template>
+
+
+<xsl:template match="div[@title='docbookAddress']">
     <address>
         <xsl:apply-templates />
     </address>

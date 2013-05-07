@@ -83,13 +83,13 @@ function docbook_dtd() {
             }
         },
 
-        docbookAddress: {
+        docbookAffiliation: {
             type: "block",
             editorType: "lineedit",
             markup: {
                 tag: "p",
                 attributes: false,
-                sampleText: "Sample Address"
+                sampleText: "Sample Affiliation"
             }
         },
 

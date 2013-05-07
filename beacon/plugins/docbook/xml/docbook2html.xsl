@@ -148,10 +148,17 @@
     </p>
 </xsl:template>
 
-<xsl:template match="address">
-    <p title="docbookAddress">
+<xsl:template match="affiliation">
+    <p title="docbookAffiliation">
         <xsl:apply-templates />
     </p>
+</xsl:template>
+
+
+<xsl:template match="address">
+    <div title="docbookAddress">
+        <xsl:apply-templates />
+    </div>
 </xsl:template>
 
 

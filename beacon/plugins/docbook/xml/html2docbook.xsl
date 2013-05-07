@@ -54,11 +54,19 @@
 </xsl:template>
 
 <xsl:template match="table[@title='docbookInformaltable']">
-    <informaltable title="docbookInformaltable" tabstyle="{@tabstyle}" frame="{@frame}">
+    <informaltable tabstyle="{@tabstyle}" frame="{@frame}">
       <tgroup cols="{@cols}">
         <xsl:apply-templates />
       </tgroup>
     </informaltable>
+</xsl:template>
+
+<xsl:template match="table[@title='docbookTable']">
+    <table tabstyle="{@tabstyle}" frame="{@frame}">
+      <tgroup cols="{@cols}">
+        <xsl:apply-templates />
+      </tgroup>
+    </table>
 </xsl:template>
 
 <xsl:template match="tbody">

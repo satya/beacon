@@ -83,6 +83,25 @@
     </table>
 </xsl:template>
 
+<xsl:template match="table">
+
+    <xsl:variable name="colsval">
+      <xsl:value-of select="tgroup//@cols"/>
+    </xsl:variable>
+  
+    <table title="docbookTable" tabstyle="{@tabstyle}" frame="{@frame}" cols="{$colsval}">
+      
+      <!-- must use thead instead of colgroup & col due to rendering issues with colgroup -->
+      <thead>
+        <tr class='thead'>
+          <xsl:apply-templates select="./tgroup/colspec" />
+        </tr>
+      </thead>
+      
+        <xsl:apply-templates select="./tgroup/tbody" />
+    </table>
+</xsl:template>
+
 <xsl:template match="tbody" name="tbody">
     <tbody>
         <xsl:apply-templates />

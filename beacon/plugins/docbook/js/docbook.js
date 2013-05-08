@@ -8,6 +8,47 @@
 
 function docbook_dtd() {
 
+    var common = {
+      
+      inlineChildren: [
+      "docbookXref",
+      "docbookEmphasis",
+      "docbookSubscript",
+      "docbookSuperscript",
+
+      "docbookSGMLTag",
+      "docbookFileName",
+      "docbookCommand",
+      "docbookOption",
+      "docbookUserInput",
+      "docbookComputerOutput",
+      "docbookClassName",
+      "docbookConstant",
+      "docbookFunction",
+      "docbookParameter",
+      "docbookReplaceable",
+      "docbookVarname",
+      "docbookStructfield",
+      "docbookSystemItem",
+      "docbookPackage",
+      "docbookPrompt"
+      ],
+               
+      blockSiblings: [
+      "docbookScreen", 
+      "docbookItemizedList",
+      "docbookOrderedList",
+      "docbookProcedure",
+      "docbookPara",
+      "docbookTable",
+      "docbookNote",
+      "docbookWarning",
+      "docbookImportant"
+      ]
+      
+      
+    };
+
     var dtd = {
         docbookArticle: {
             removable: false
@@ -43,22 +84,61 @@ function docbook_dtd() {
             }
         },
 
+        docbookAffiliation: {
+            type: "block",
+            editorType: "lineedit",
+            markup: {
+                tag: "p",
+                attributes: false,
+                sampleText: "Sample Affiliation"
+            }
+        },
+
+        docbookStreet: {
+            type: "block",
+            editorType: "lineedit",
+            markup: {
+                tag: "p",
+                attributes: false,
+                sampleText: "Sample Street"
+            }
+        },
+
+        docbookCity: {
+            type: "block",
+            editorType: "lineedit",
+            markup: {
+                tag: "p",
+                attributes: false,
+                sampleText: "Sample City"
+            }
+        },
+
+        docbookState: {
+            type: "block",
+            editorType: "lineedit",
+            markup: {
+                tag: "p",
+                attributes: false,
+                sampleText: "Sample State"
+            }
+        },
+
+        docbookPostcode: {
+            type: "block",
+            editorType: "lineedit",
+            markup: {
+                tag: "p",
+                attributes: false,
+                sampleText: "Sample Postcode"
+            }
+        },
+
         docbookPara: {
             type: "block",
-            inlineChildren: ["docbookSGMLTag", "docbookFileName",
-                             "docbookCommand", "docbookOption",
-                             "docbookUserInput", "docbookComputerOutput",
-							 "docbookEmphasis", "docbookClassName",
-							 "docbookConstant", "docbookFunction",
-							 "docbookParameter", "docbookReplaceable",
-							 "docbookVarname", "docbookStructfield",
-							 "docbookSystemItem", "docbookPackage",
-							 "docbookSubscript", "docbookSuperscript",
-							 "docbookprompt"],
+            inlineChildren: common.inlineChildren,
             blockChildren: false,
-            siblings: ["docbookScreen", "docbookItemizedList",
-                       "docbookProcedure", "docbookPara",
-                       "docbookNote", "docbookWarning", "docbookImportant"],
+            siblings: common.blockSiblings,
             editorType: "richText",
             markup: {
                 tag: "p",
@@ -67,13 +147,57 @@ function docbook_dtd() {
             }
         },
 
+        docbookTable: {
+            type: "block",
+            siblings: common.blockSiblings,
+            markup: {
+                tag: "table",
+                attributes: { tabstyle: "striped", frame:"all", cols: "3"},
+                requiredChildNodes: ["docbookThead","docbookTbody"]
+            }
+        },
+        
+        docbookThead: {
+            type: "block",
+            markup: {
+                tag: "thead",
+                attributes: false,
+                requiredChildNodes: ["docbookRow"]
+            }
+        },
+
+        docbookTbody: {
+            type: "block",
+            markup: {
+                tag: "tbody",
+                attributes: false,
+                requiredChildNodes: ["docbookRow","docbookRow"]
+            }
+        },
+        
+        docbookRow: {
+            type: "block",
+            markup: {
+                tag: "tr",
+                attributes: false,
+                requiredChildNodes: ["docbookEntry","docbookEntry","docbookEntry"]
+            }
+        },
+
+        docbookEntry: {
+            type: "block",
+            markup: {
+                tag: "td",
+                attributes: false,
+                requiredChildNodes: ["docbookPara"]
+            }
+        },
+
         docbookItemizedList: {
             type: "block",
-            siblings: ["docbookScreen", "docbookItemizedList",
-                       "docbookProcedure", "docbookPara",
-                       "docbookNote", "docbookWarning", "docbookImportant"],
+            siblings: common.blockSiblings,
             markup: {
-                requiredChildNodes: ["docbookItemizedListTitle", "docbookItemizedListContainer"],
+                requiredChildNodes: ["docbookItemizedListContainer"],
                 tag: "div",
                 attributes: false
             }
@@ -102,6 +226,39 @@ function docbook_dtd() {
             }
         },
 
+        docbookOrderedList: {
+            type: "block",
+            siblings: common.blockSiblings,
+            markup: {
+                requiredChildNodes: ["docbookOrderedListContainer"],
+                tag: "div",
+                attributes: false
+            }
+        },
+
+        docbookOrderedListTitle: {
+            type: "block",
+            editorType: "lineedit",
+            markup: {
+                tag: "p",
+                attributes: {
+                    className: "orderedlistitle"
+                },
+                sampleText: "Sample Ordered List"
+            }
+        },
+
+        docbookOrderedListContainer: {
+            type: "block",
+            markup: {
+                requiredChildNodes: ["docbookListItem"],
+                tag: "ol",
+                attributes: {
+                    className: "orderedList"
+                }
+            }
+        },
+
         docbookListItem: {
             type: "block",
             siblings: ["docbookListItem"],
@@ -114,9 +271,7 @@ function docbook_dtd() {
 
         docbookProcedure: {
             type: "block",
-            siblings: ["docbookScreen", "docbookItemizedList",
-                       "docbookProcedure", "docbookPara",
-                       "docbookNote", "docbookWarning", "docbookImportant"],
+            siblings: common.blockSiblings,
             markup: {
                 requiredChildNodes: ["docbookProcedureTitle", "docbookProcedureContainer"],
                 tag: "div",
@@ -161,9 +316,7 @@ function docbook_dtd() {
             type: "block",
             inlineChildren: false,
             blockChildren: false,
-            siblings: ["docbookScreen", "docbookItemizedList",
-                       "docbookProcedure", "docbookPara",
-                       "docbookNote", "docbookWarning", "docbookImportant"],
+            siblings: common.blockSiblings,
             markup: {
                 requiredChildNodes: ["docbookNoteTitle", "docbookPara"],
                 tag: "div",
@@ -188,9 +341,7 @@ function docbook_dtd() {
             type: "block",
             inlineChildren: false,
             blockChildren: false,
-            siblings: ["docbookScreen", "docbookItemizedList",
-                       "docbookProcedure", "docbookPara",
-                       "docbookNote", "docbookWarning", "docbookImportant"],
+            siblings: common.blockSiblings,
             markup: {
                 requiredChildNodes: ["docbookWarningTitle", "docbookPara"],
                 tag: "div",
@@ -215,9 +366,7 @@ function docbook_dtd() {
             type: "block",
             inlineChildren: false,
             blockChildren: false,
-            siblings: ["docbookScreen", "docbookItemizedList",
-                       "docbookProcedure", "docbookPara",
-                       "docbookNote", "docbookWarning", "docbookImportant"],
+            siblings: common.blockSiblings,
             markup: {
                 requiredChildNodes: ["docbookImportantTitle", "docbookPara"],
                 tag: "div",
@@ -240,20 +389,9 @@ function docbook_dtd() {
 
         docbookScreen: {
             type: "block",
-            inlineChildren: ["docbookSGMLTag", "docbookFileName",
-                             "docbookCommand", "docbookOption",
-                             "docbookUserInput", "docbookComputerOutput",
-							 "docbookEmphasis", "docbookClassName",
-							 "docbookConstant", "docbookFunction",
-							 "docbookParameter", "docbookReplaceable",
-							 "docbookVarname", "docbookStructfield",
-							 "docbookSystemItem", "docbookPackage",
-							 "docbookSubscript", "docbookSuperscript",
-							 "docbookprompt"],
+            inlineChildren: common.inlineChildren,
             blockChildren: false,
-            siblings: ["docbookScreen", "docbookItemizedList",
-                       "docbookProcedure", "docbookPara",
-                       "docbookNote", "docbookWarning", "docbookImportant"],
+            siblings: common.blockSiblings,
             editorType: "richText",
             markup: {
                 tag: "pre",
@@ -266,6 +404,18 @@ function docbook_dtd() {
 
 
         // Inline Tags below this
+
+        docbookXref: {
+            type: "inline",
+            inlineType: "prompt",
+            markup: {
+                tag: "a",
+                attributes: {
+                    className: "xref",
+                    linkend: "prompt"
+                }
+            }
+        },
 
         docbookSGMLTag: {
             type: "inline",

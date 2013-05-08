@@ -82,6 +82,10 @@ var BeaconAPI = function(o, beacon) {
 
         // Let us attach the events
         $(this.ui["SaveButton"].id).bind("click", this.saveDocument.attach(this));
+        
+        $(this.ui["CustomCommand1"].id).bind("click", this.customCommand.attach(this));
+        $(this.ui["CustomCommand2"].id).bind("click", this.customCommand.attach(this));
+        $(this.ui["CustomCommand3"].id).bind("click", this.customCommand.attach(this));
 
         // window.setInterval(this.autoSave.attach(this), 300000);
 
@@ -96,14 +100,122 @@ var BeaconAPI = function(o, beacon) {
         $(this.ui["Iframe"].id).contents().bind("click", this.frameClick.attach(this));
         $(this.ui["Iframe"].id).contents().bind("keydown", this.frameKeyDown.attach(this));
 
+        this.selectionEvents();
+        
         this.buildTree();
 
     }.attach(this));
 };
 
+BeaconAPI.prototype.customCommand = function(evt) {
+  
+    evt.preventDefault();
+  
+    var customCommandId = null;
+  
+    if($(evt.target).attr("tagName")==="SPAN"){
+      customCommandId = $($(evt.target).parent()).attr("id").replace(this.id,"");
+    }else{
+      customCommandId = $(evt.target).attr("id").replace(this.id,"");
+    }
+  
+    
+    var customCommandName = beacon.settings.customCommands[customCommandId].name;
+  
+  
+    var o = {
+        action: "customCommand",
+        payload: {
+            id: this.id,
+            plugin: this.plugin,
+            customCommandId: customCommandId
+        }
+    };
+  
+    // if there are arguments in the conf file for this command, use a
+    // dialog to get argument values from user
+    if(beacon.settings.customCommands[customCommandId].arguments.length>0){
+
+        var promptFields = "";
+
+        for(var k in beacon.settings.customCommands[customCommandId].arguments){
+            var promptName = beacon.settings.customCommands[customCommandId].arguments[k];
+            promptFields += "<label for='" + promptName + "'>" + promptName + "</label>";
+            promptFields += "<input type='text' name='" + promptName + "' id='" + promptName + "' class='text ui-widget-content ui-corner-all' />";
+        }
+        
+        var promptDialog = $("<div class='prompt-dialog' title='Arguments for " + customCommandName + "'><p class='validateTips'>All form fields are required.</p><form><fieldset>" + promptFields + "</fieldset></form></div>");
+        
+        var thisParent = this;
+        
+        
+        $(promptDialog).dialog({
+          autoOpen: false,
+          draggable: true,
+          height: 300,
+          width: 350,
+          modal: true,
+          buttons: {
+            Execute: function() {
+              var bValid = true;
+              if ( bValid ) {
+                
+                var formValues = $($(promptDialog).find("form")[0]).serializeArray();
+                
+                var arguments = new Array();
+                
+                for(var k in formValues){
+                  var formValue = formValues[k];
+                  arguments.push(formValue.value);
+                }
+                
+                $( this ).dialog( "close" );
+                
+                o.payload.arguments = arguments;
+                
+                
+                $.ajax({
+                    url: thisParent.beacon.getURL("handler"),
+                    type: "POST",
+                    data: JSON.stringify(o),
+                    success: function(result) {
+                        $("<div title='" + customCommandName + " complete!'>"+result+"</div>").dialog({modal:true});
+                    }.attach(thisParent)
+                });
+                
+                
+                
+              }
+            }
+          }
+        });
+        
+        $(promptDialog).dialog("open");
+      
+      
+    }else{
+      
+        $.ajax({
+            url: this.beacon.getURL("handler"),
+            type: "POST",
+            data: JSON.stringify(o),
+            success: function(result) {
+                $("<div title='" + customCommandName + " complete!'>"+result+"</div>").dialog({modal:true});
+            }.attach(this)
+        });
+      
+    }
+  
+
+  
+
+  
+}
+
 BeaconAPI.prototype.getUIList = function() {
     var list = ["Document", "Content", "Sidebar", "RightToolBar", "Accordion",
               "ToolHolder", "Iframe", "SourceView", "CloseButton", "SaveButton",
+              "CustomCommand1","CustomCommand2","CustomCommand3",
               "ViewSourceButton", "DownloadButton", "TimeStamp", "Loading",
               "InsertInlineButton", "InsertInlineList", "BeaconTreeContainer",
               "TextBox", "RevisionsView", "TabList", "DesignViewLoading",
@@ -165,7 +277,7 @@ BeaconAPI.prototype.initEditor = function(o) {
 
     // If not found in DTD let's move on
     if (!nodeDef) {
-        //$.jGrowl("Not found in DTD!");
+        //BeaconMessage.init("Not found in DTD!");
         return false;
     }
 
@@ -277,6 +389,14 @@ BeaconAPI.prototype.buildInlineInsertMenu = function(nodeDef) {
     }
 
     for (var i = 0; i < list.length; i++) {
+      
+        if(list[i]==="docbookXref"){
+          html += "<optgroup label='General Editorial Tags'></optgroup>";
+        }
+        if(list[i]==="docbookSGMLTag"){
+          html += "<optgroup label='Computer Language Tags'></optgroup>";
+        }
+      
         html += '<option value="'+list[i]+'">';
         html += list[i];
         html += '</option>';
@@ -286,25 +406,21 @@ BeaconAPI.prototype.buildInlineInsertMenu = function(nodeDef) {
 };
 
 BeaconAPI.prototype.insertInline = function() {
+  
     if (!this.state["editing"]) {
-        $.jGrowl("You are not editing anything!");
+        BeaconMessage.init("You are not editing anything!");
         return;
     }
 
     if (this.currentEditor.getType() !== "richtext") {
-        $.jGrowl("You cannot insert a node in non-richtext type editor.");
+        BeaconMessage.init("You cannot insert a node in non-richtext type editor.");
         return;
     }
 
     var val = $(this.ui["InsertInlineList"].id).val();
 
     if (val === "-1") {
-        $.jGrowl("Select something!");
-        return;
-    }
-
-    if (val.length !== 1) {
-        $.jGrowl("I told you to select only option! :)");
+        BeaconMessage.init("Select something!");
         return;
     }
 
@@ -317,10 +433,75 @@ BeaconAPI.prototype.insertInline = function() {
     var text = this.iframe.getSelection();
 
     if (insertDef.inlineType === "generic") {
-        // If its generic then just dump it in the iframe
+        // If it's generic then just dump it in the iframe
         var html = this.buildHTML(val, insertDef.markup, text);
         this.currentEditor.insertText(html);
     }
+    
+    if (insertDef.inlineType === "prompt") {
+        // If it's "prompt" then prompt for input on attributes that have value "prompt"
+        var thisElement = $.extend(true,{},insertDef.markup);
+        var promptFields = "";
+        
+        for(var k in thisElement.attributes){
+          if(thisElement.attributes[k] === "prompt"){
+            var promptName = k;
+            if(k==="linkend"){
+              // for linkend, gather tree nodes with IDs
+              promptFields += "<label for='" + promptName + "'>" + promptName + "</label>";
+              promptFields += "<select name='" + promptName + "' id='" + promptName + "' class='text ui-widget-content ui-corner-all'>";
+              for(var n in this.tree){
+                if(this.tree[n].node.id!==""){
+                  var thisId = this.tree[n].node.id;
+                  var thisName = this.tree[n].node.firstElementChild.innerHTML;
+                  promptFields += "<option value='" + thisId + "'>" + thisName + "</option>";
+                }
+              }
+              promptFields += "</select>";
+              
+            }else{
+              promptFields += "<label for='" + promptName + "'>" + promptName + "</label>";
+              promptFields += "<input type='text' name='" + promptName + "' id='" + promptName + "' class='text ui-widget-content ui-corner-all' />";
+            }
+          }
+        }
+        
+        var promptDialog = $("<div class='prompt-dialog' title='Attribute values'><p class='validateTips'>All form fields are required.</p><form><fieldset>" + promptFields + "</fieldset></form></div>");
+        
+        var thisParent = this;
+        
+        $(promptDialog).dialog({
+          autoOpen: false,
+          draggable: true,
+          height: 300,
+          width: 350,
+          modal: true,
+          buttons: {
+            Save: function() {
+              var bValid = true;
+              if ( bValid ) {
+                
+                var formValues = $($(promptDialog).find("form")[0]).serializeArray();
+                
+                for(var k in formValues){
+                  var formValue = formValues[k];
+                  thisElement.attributes[formValue.name] = formValue.value;
+                }
+                $( this ).dialog( "close" );
+              }
+            }
+          },
+          close: function() {
+            //allFields.val( "" ).removeClass( "ui-state-error" );
+            var html = thisParent.buildHTML(val, thisElement, text);
+            thisParent.currentEditor.insertText(html);
+          }
+        });
+        
+        $(promptDialog).dialog("open");
+    }
+
+    
 };
 
 BeaconAPI.prototype.buildHTML = function(title, markup, text) {
@@ -376,7 +557,7 @@ BeaconAPI.prototype.buildBlockInsertMenu = function(nodeDef) {
 
 BeaconAPI.prototype.insertBlock = function() {
     if (!this.state["editing"]) {
-        $.jGrowl("You are not editing anything!");
+        BeaconMessage.init("You are not editing anything!");
         return;
     }
 
@@ -385,7 +566,7 @@ BeaconAPI.prototype.insertBlock = function() {
     var position = $('input[name=insertAt]:checked').val();
 
     if (name === "-1") {
-        $.jGrowl("Select Something!");
+        BeaconMessage.init("Select Something!");
         return;
     }
 
@@ -451,12 +632,37 @@ BeaconAPI.prototype.buildNodeStructure = function(title) {
 
 // --------------------- Save and close Functions ------------------------------
 
-BeaconAPI.prototype.closeDocument = function() {
-    if (confirm("Do you want to save the current changes?")) {
-        this.saveDocument();
+BeaconAPI.prototype.closeDocument = function(evt) {
+  
+    evt.preventDefault();
+  
+    if (this.state["editing"]) {
+        BeaconMessage.init("Please finish editing before closing.");
+        return;
     }
 
-    this.beacon.closeDoc(this.id);
+  
+  var thisDocument = this;
+  
+    $("<div title='Close Document'>Do you want to save the current changes?</div>").dialog({
+      resizable: false,
+      modal: true,
+      buttons: {
+        "Cancel": function() {
+          $(this).dialog("close");
+        },
+        "Close without saving": function() {
+          thisDocument.beacon.closeDoc(thisDocument.id);
+          $(this).dialog("close");
+        },
+        "Save and close": function() {
+          thisDocument.saveDocument();
+          thisDocument.beacon.closeDoc(thisDocument.id);
+          $(this).dialog("close");
+        }
+      }
+    });
+  
 };
 
 BeaconAPI.prototype.autoSave = function() {
@@ -471,14 +677,15 @@ BeaconAPI.prototype.autoSave = function() {
     this.saveDocument();
 };
 
-BeaconAPI.prototype.saveDocument = function() {
+BeaconAPI.prototype.saveDocument = function(evt) {
+    evt.preventDefault();
     if (this.state["fetchingSource"] || this.state["fetchingHTML"] || this.state["saving"]) {
-        $.jGrowl("Please Wait for the current operation to be completed!");
+        BeaconMessage.init("Please Wait for the current operation to be completed!");
         return;
     }
 
     if (this.state["editing"]) {
-        $.jGrowl("Please finish editing before saving.");
+        BeaconMessage.init("Please finish editing before saving.");
         return;
     }
 
@@ -501,7 +708,7 @@ BeaconAPI.prototype.saveDocument = function() {
         type: "POST",
         data: JSON.stringify(o),
         success: function(result) {
-            $.jGrowl("Save done!");
+            BeaconMessage.init("Save done!");
             this.state["saving"] = false;
         }.attach(this)
     });
@@ -517,18 +724,26 @@ BeaconAPI.prototype.viewChange = function(event, ui) {
         this.state["saving"] ||
         this.state["fetchingRevisions"]) {
 
-        $.jGrowl("Please let the current operation complete!");
+        BeaconMessage.init("Please let the current operation complete!");
         return false;
     }
 
     var index = ui.index;
 
+    // seizing this opportunity to correct problems with non-breaking
+    // spaces that sometimes occur when copying and pasting XML
+    var fixedHTML = $(this.ui["Iframe"].id).contents().find("body").html();
+    fixedHTML = fixedHTML.replace(/\u00a0/g," ").replace(/&nbsp;/g," ");
+    $(this.ui["Iframe"].id).contents().find("body").html(fixedHTML)
+
     switch(index) {
         case 0:
             if (this.tabIndex === 1)
                 this.getHTML();
-            else if (this.tabIndex === 2)
+            else if (this.tabIndex === 2){
+              this.selectionEvents();
                 this.buildTree();
+              }
             break;
 
         case 1:
@@ -546,7 +761,7 @@ BeaconAPI.prototype.viewChange = function(event, ui) {
 
 // Emergency Restore Function
 BeaconAPI.prototype.restoreDocument = function() {
-    $.jGrowl("The server could not parse! Restoring back to last known stable document.");
+    BeaconMessage.init("The server could not parse! Restoring back to last known stable document.");
 
     document.getElementById(this.id+"Iframe").contentWindow.document.body.innerHTML = this.html;
 
@@ -567,7 +782,7 @@ BeaconAPI.prototype.restoreDocument = function() {
 
 // Emergency Restore Function
 BeaconAPI.prototype.restoreSourceView = function() {
-    $.jGrowl("The server could not parse the XML! Please check for any formatting errors. \
+    BeaconMessage.init("The server could not parse the XML! Please check for any formatting errors. \
     Restoring back to last known stable document.");
 
     $(this.ui["TextBox"].id).val(this.src);
@@ -618,7 +833,7 @@ BeaconAPI.prototype.getSource = function(displayFlag) {
                 this.restoreDocument();
                 return;
             }
-            src = decodeURIComponent(src);
+            src = decodeURIComponent(src.replace(/%/g,"%25"));
 
             this.state["fetchingSource"] = false;
             this.src = src;
@@ -664,7 +879,7 @@ BeaconAPI.prototype.getHTML = function(displayFlag) {
                 this.restoreSourceView();
                 return;
             }
-            html = decodeURIComponent(html);
+            html = decodeURIComponent(html.replace(/%/g,"%25"));
 
             this.state["fetchingHTML"] = false;
 
@@ -673,11 +888,36 @@ BeaconAPI.prototype.getHTML = function(displayFlag) {
 
             $(this.ui["DesignViewLoading"].id).hide();
             $(this.ui["Iframe"].id).show();
+            
+            this.selectionEvents();
 
             this.buildTree();
         }.attach(this)
     });
 };
+
+BeaconAPI.prototype.selectionEvents = function(){
+  
+  var elements = ['div','h1','h2','h3','h4','h5','h6','p'];
+  
+  for(i in elements){
+    var element = elements[i];
+    $(document.getElementById(this.id+"Iframe").contentWindow.document).find(element).click(function(evt){
+      
+      var el = evt.target;
+      var nodeId = getNodeId(this.id,getElementPath(el));
+      selectTreeNode(nodeId);
+      
+      $($(el).parents("body")[0]).find(".selected").removeClass("selected");
+      $(el).addClass("selected");
+
+      
+      //evt.stopPropagation();
+      
+    }.attach(this));
+  }
+  
+}
 
 BeaconAPI.prototype.getRevisions = function() {
     this.state["fetchingRevisions"] = true;
@@ -706,7 +946,7 @@ BeaconAPI.prototype.getRevisions = function() {
             this.revisions = json.revisions;
 
             if (json.revisions.length === 0) {
-                $.jGrowl("No Revisions Found!");
+                BeaconMessage.init("No Revisions Found!");
                 this.state["fetchingRevisions"] = false;
 
                 $(this.ui["RevisionsViewLoading"].id).hide();
@@ -755,6 +995,8 @@ BeaconAPI.prototype.generateTreeNodeID = function() {
 
 BeaconAPI.prototype.buildTree = function() {
     var html = "";
+    
+    var icon_path = "../beacon/img/";
 
     var root = this.iframe.document.body;
 
@@ -764,10 +1006,11 @@ BeaconAPI.prototype.buildTree = function() {
 
     $(this.ui["BeaconTreeContainer"].id).tree({
         ui : {
+          theme_path:'../beacon/img/',
             context : [
             {
                 id    : this.id + "addSiblingBefore",
-                icon  : "img/create.png",
+                icon  : icon_path + "create.png",
                 label  : "Add Sibling Before This Node",
                 visible  : function (node) {
                     var name = $(this.tree[node.attr("id")].node).attr("title");
@@ -811,7 +1054,7 @@ BeaconAPI.prototype.buildTree = function() {
                         var val = $("#" + this.api.id + "nodeInsertBefore").val();
 
                         if (val === "-1") {
-                            $.jGrowl("Select something!");
+                            BeaconMessage.init("Select something!");
                             return;
                         }
 
@@ -856,7 +1099,7 @@ BeaconAPI.prototype.buildTree = function() {
             {
                 id    : this.id + "addSiblingAfter",
                 label  : "Add Sibling After This Node",
-                icon  : "img/create.png",
+                icon  : icon_path + "create.png",
                 visible  : function (node) {
                     var name = $(this.tree[node.attr("id")].node).attr("title");
 
@@ -899,7 +1142,7 @@ BeaconAPI.prototype.buildTree = function() {
                         var val = $("#" + this.api.id + "nodeInsertAfter").val();
 
                         if (val === "-1") {
-                            $.jGrowl("Select something!");
+                            BeaconMessage.init("Select something!");
                             return;
                         }
 
@@ -944,7 +1187,7 @@ BeaconAPI.prototype.buildTree = function() {
             {
                  id    : this.id + "removeNode",
                  label  : "Delete this Node",
-                 icon  : "img/remove.png",
+                 icon  : icon_path + "remove.png",
                  visible  : function (node) {
                      var name = $(this.tree[node.attr("id")].node).attr("title");
 
@@ -969,7 +1212,7 @@ BeaconAPI.prototype.buildTree = function() {
                      var id = node.attr("id");
 
                      if (!this.tree[id]) {
-                         $.jGrowl("Boohoo! Something b0rked. :( Blame the devs...");
+                         BeaconMessage.init("Boohoo! Something b0rked. :( Blame the devs...");
                          return;
                      }
 
@@ -993,14 +1236,18 @@ BeaconAPI.prototype.buildTree = function() {
         },
 
         callback : {
-            beforechange: function() {  },
+            beforechange: function(node) { $($(node).parents(".tree")[0]).find(".clicked").removeClass("clicked"); },
             beforeopen  : function() {  },
             beforeclose : function() {  },
             beforemove  : function() {  },
             beforecreate: function() {  },
             beforerename: function() {  },
             beforedelete: function() {  },
-            onselect    : function() {  },
+            onselect    : function(node) {
+              var id = node.id;
+              $($(this.tree[id].node).parents("body")[0]).find(".selected").removeClass("selected");
+              $(this.tree[id].node).addClass("selected");
+            }.attach(this),
             ondeselect  : function() {  },
             onchange    : function() {  },
             onrename    : function() {  },
@@ -1014,12 +1261,13 @@ BeaconAPI.prototype.buildTree = function() {
             error       : function() {  },
 
             ondblclk    : function(node) {
-                var id = node.id;
-
-                $(this.ui["Iframe"].id).scrollTo(this.tree[id].node, {
-                    duration: 600
-                });
-
+              var id = node.id;
+              if($("#"+id).hasClass("closed")){
+                $("#"+id).removeClass("closed").addClass("open");
+              }
+              $(this.ui["Iframe"].id).scrollTo(this.tree[id].node, {
+                duration: 600
+              });
             }.attach(this),
 
             onrgtclk    : function() {  },
@@ -1083,6 +1331,7 @@ BeaconAPI.prototype.walkDOM = function(root) {
 //-----------------------------Different Editors -------------------------------
 
 var BeaconRichTextEditor = function(o, iframe) {
+  
     // Store this node
     this.node = o;
 
@@ -1128,8 +1377,114 @@ BeaconRichTextEditor.prototype.getType = function() {
 };
 
 
+function getElementPath(element)
+{
+    var elementTitleArray = [];
+    $(element).parents().not('html').not('body').each(function() {
+      if(typeof this.title !== "undefined" && this.title!==""){
+        var entry = this.title;
+        if ($(this).siblings(this.tagName+"[title="+this.title+"]").length > 0) {
+            entry += "[" + $(this).prevAll(this.tagName+"[title="+this.title+"]").length + "]";
+        }
+        elementTitleArray.push(entry);
+      }
+    });
+    elementTitleArray.reverse();
+    
+    var entry = element.title;
+    if ($(element).siblings(element.tagName+"[title="+element.title+"]").length > 0) {
+        entry += "[" + $(element).prevAll(element.tagName+"[title="+element.title+"]").length + "]";
+    }
+    elementTitleArray.push(entry);
+
+    
+    return elementTitleArray;
+}
+
+/*
+an example of how to select and open nodes in the tree from outside of the tree (a bit of a hack)
+
+$("#14BeaconTreeContainer .clicked").removeClass("clicked");
+$("#14_node_13").removeClass("closed").addClass('open').find(">a").addClass("clicked");
+*/
+
+function getNodeId(documentId,elementPath){
+  
+  // root node of tree
+  var thisNode = $("#"+documentId+"BeaconTreeContainer>ul>li")[0];
+  var nextElement = elementPath.shift();
+  var depth = 0;
+  
+  // possibly unnecessary to evaluate root
+  if($(thisNode).find(">a").text()===nextElement){
+    while(elementPath.length>0){
+      
+      nextElement = elementPath.shift();
+      
+      var regex = /[\w]+/g;
+      var matches = nextElement.match(regex);
+      
+      if(matches!== null && matches.length>0){
+        
+        var elementName = "";
+        var elementIndex = 0;
+        
+        elementName = matches[0];
+        if(matches.length>1){
+          elementIndex = parseInt(matches[1],10);
+        }
+        
+        var nodesText = new Array();
+        var goodIterator = 0;
+        
+        $(thisNode).find(">ul>li").each(function(i,el){
+          
+          var thisAnchor = $(el).find(">a")[0];
+          if($(thisAnchor).text()===elementName){
+            if(goodIterator===elementIndex){
+              thisNode = el;
+            }
+            goodIterator++;
+          }          
+        });
+        
+      }
+      depth++;
+    }
+  }
+  
+  return thisNode.id;
+  
+}
+
+function selectTreeNode(nodeId){
+
+  if($("#"+nodeId).length>0){
+    var $thisNode = $("#"+nodeId);
+    do{
+      if(!$thisNode.hasClass("leaf")){
+        $thisNode.removeClass("closed").addClass('open');
+      }
+      $thisNode = $thisNode.parent();
+    }while(!$thisNode.parent().hasClass(".tree"));
+    
+    $($("#"+nodeId).parents(".tree")[0]).find(".clicked").removeClass("clicked");
+    $("#"+nodeId).find(">a").addClass("clicked");
+  }
+  
+}
+
 
 var BeaconLineEditor = function(o, iframe) {
+  /*
+    // need to open up visual tree when clicking on something.
+    console.log(o);
+    console.log(getElementPath(o));
+    
+    var documentId = iframe.frameElement.id.replace("Iframe","");
+    var nodeId = getNodeId(documentId,getElementPath(o));
+    selectTreeNode(nodeId);
+    */
     // Store this node
     this.node = o;
 
@@ -1175,6 +1530,7 @@ BeaconLineEditor.prototype.getNode = function() {
 
 
 var BeaconPlainTextEditor = function(o, iframe) {
+  
     // Store this node
     this.node = o;
 

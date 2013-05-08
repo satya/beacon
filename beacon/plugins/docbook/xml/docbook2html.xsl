@@ -64,6 +64,104 @@
 <xsl:template match="title">
 </xsl:template>
 
+<xsl:template match="informaltable">
+
+    <xsl:variable name="colsval">
+      <xsl:value-of select="tgroup//@cols"/>
+    </xsl:variable>
+  
+    <table title="docbookInformaltable" tabstyle="{@tabstyle}" frame="{@frame}" cols="{$colsval}">
+      <xsl:apply-templates />
+    </table>
+</xsl:template>
+
+<xsl:template match="table">
+
+    <xsl:variable name="colsval">
+      <xsl:value-of select="tgroup//@cols"/>
+    </xsl:variable>
+  
+    <table title="docbookTable" tabstyle="{@tabstyle}" frame="{@frame}" cols="{$colsval}">
+      <xsl:apply-templates />
+    </table>
+</xsl:template>
+
+<xsl:template match="tbody" name="tbody">
+    <tbody title='docbookTbody'>
+        <xsl:apply-templates />
+    </tbody>
+</xsl:template>
+
+<xsl:template match="thead" name="thead">
+    <thead title='docbookThead'>
+      <tr title='docbookRow'>
+        <xsl:apply-templates select="./row/entry" name="th" />
+      </tr>
+    </thead>
+</xsl:template>
+
+<xsl:template match="row">
+    <tr rowsep="{@rowsep}" title='docbookRow'>
+        <xsl:apply-templates />
+    </tr>
+</xsl:template>
+
+<xsl:template match="entry">
+    <td title='docbookEntry'>
+        <xsl:apply-templates />
+    </td>
+</xsl:template>
+
+<xsl:template match="//thead/row/entry" name="th">
+    <th title='docbookEntry'>
+        <xsl:apply-templates />
+    </th>
+</xsl:template>
+
+
+<xsl:template match="colspec">
+  <caption colname="{@colname}" colsep="{@colsep}" colwidth="{@colwidth}"></caption>
+</xsl:template>
+
+<xsl:template match="street">
+    <p title="docbookStreet">
+        <xsl:apply-templates />
+    </p>
+</xsl:template>
+
+<xsl:template match="city">
+    <p title="docbookCity">
+        <xsl:apply-templates />
+    </p>
+</xsl:template>
+
+<xsl:template match="state">
+    <p title="docbookState">
+        <xsl:apply-templates />
+    </p>
+</xsl:template>
+
+<xsl:template match="postcode">
+    <p title="docbookPostcode">
+        <xsl:apply-templates />
+    </p>
+</xsl:template>
+
+<xsl:template match="affiliation">
+    <p title="docbookAffiliation">
+        <xsl:apply-templates />
+    </p>
+</xsl:template>
+
+
+<xsl:template match="address">
+    <div title="docbookAddress">
+        <xsl:apply-templates />
+    </div>
+</xsl:template>
+
+
+
 <xsl:template match="para">
     <p title="docbookPara">
         <xsl:apply-templates />
@@ -108,6 +206,17 @@
     </div>
 </xsl:template>
 
+<xsl:template match="orderedlist">
+    <div title="docbookOrderedList">
+        <p class="orderedlistitle" title="docbookOrderedListTitle">
+            <xsl:value-of select="title" />
+        </p>
+        <ol title="docbookOrderedListContainer" class="orderedlist">
+            <xsl:apply-templates />
+        </ol>
+    </div>
+</xsl:template>
+
 <xsl:template match="listitem">
     <li title="docbookListItem">
         <xsl:apply-templates />
@@ -142,6 +251,12 @@
 <!-- ********************** -->
 <!-- Inline tags below this -->
 <!-- ********************** -->
+
+<xsl:template match="xref">
+    <a title="docbookXref" class="xref" linkend="{@linkend}">
+        <xsl:apply-templates />
+    </a>
+</xsl:template>
 
 <xsl:template match="sgmltag">
     <span title="docbookSGMLTag" class="sgmltag-{@class}">

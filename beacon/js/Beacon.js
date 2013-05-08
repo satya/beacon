@@ -102,7 +102,7 @@ Beacon.prototype.init = function() {
     var scripts = ["BeaconAPI.js",
                     "jquery.ui.js",
                     "jquery.hotkeys.js",
-                    "jquery.jgrowl.js",
+//                    "jquery.jgrowl.js",
                     "jquery.jstree.js",
                     "jquery.scrollTo.js"];
 
@@ -172,11 +172,23 @@ Beacon.prototype.init = function() {
                 $("#BeaconConfigPlugins").append("<span>" + this.settings.plugins[i] + " </span>");
                 $("#BeaconNewDocType").append("<option value=\"" + i + "\">" + this.settings.plugins[i] + " </option>");
                 $("#BeaconEditDocType").append("<option value=\"" + i + "\">" + this.settings.plugins[i] + " </option>");
-		$("#BeaconUploadDocType").append("<option value=\"" + i + "\">" + this.settings.plugins[i] + " </option>");
+                $("#BeaconUploadDocType").append("<option value=\"" + i + "\">" + this.settings.plugins[i] + " </option>");
             }
 
             $("#BeaconConfigLanguage").html(this.settings.language);
             $("#BeaconConfigTheme").html(this.settings.theme);
+
+            $("#BeaconNewDocType").change(function(evt){
+              var selectedType = $.trim($(evt.target).find("option:selected").text());
+              $("#BeaconNewDocumentMenu").find("select[id$=template]").hide(10,function(){
+                $("#" + selectedType + "-template").show();
+              });
+            });
+
+
+            var selectedType = $.trim($("#BeaconNewDocType").find("option:selected").text());
+            $("#BeaconNewDocumentMenu").find("select[id$=template]").hide();
+            $("#" + selectedType + "-template").show();
 
 
             resizeDocuments();
@@ -287,14 +299,14 @@ Beacon.prototype.newDoc = function() {
         id = 0,
         container = "";
 
-    filename = filename.replace(" ", "_");
+    filename = filename.replace(/ /g, "_").replace(/[$-\/:-?{-~!"^`\[\]#@]/g,"_");
 
     if (filetype === "-1") {
-        $.jGrowl(this.strings.messages["noFileType"]);
+        BeaconMessage.init(this.strings.messages["noFileType"]);
         flag = false;
     }
     if (filename.length === 0) {
-        $.jGrowl(this.strings.messages["noFileName"]);
+        BeaconMessage.init(this.strings.messages["noFileName"]);
         flag = false;
     }
 
@@ -304,7 +316,7 @@ Beacon.prototype.newDoc = function() {
     }
 
     if ((filename.indexOf(".")!= -1) && (filename.substring(filename.length - 4) !== ".xml")) {
-        $.jGrowl("Invalid File Name. Do NOT Give File Extension");
+        BeaconMessage.init("Invalid File Name. Do NOT Give File Extension");
         flag = false;
     }
 
@@ -315,11 +327,15 @@ Beacon.prototype.newDoc = function() {
     $("#BeaconNewFileName").val("");
     $("#BeaconNewDocType").val(-1);
 
+    var selectedType = $.trim($("#BeaconNewDocType").find("option:selected").text());
+    var selected_template = $("#" + selectedType + "-template").val();
+
+
     // To add some randomness to the tab id temporarily
     id = Math.floor(Math.random()*10001);
 
     this.initDoc(filename, id, "newdoc",
-                    this.settings.plugins[filetype], undefined);
+                    this.settings.plugins[filetype], undefined, selected_template);
 };
 
 
@@ -335,9 +351,9 @@ Beacon.prototype.fetchDoc = function(e) {
 Beacon.prototype.uploadDoc = function(e) {
     var fname = $.trim($("#BeaconUploadName").val()),
         ftype = $.trim($("#BeaconUploadDocType").val());
-	$.jGrowl(fname);
+	BeaconMessage.init(fname);
 
-    //$.jGrowl(this.strings.messages[$(fname)]);
+    //BeaconMessage.init(this.strings.messages[$(fname)]);
 
     var id = Math.floor(Math.random() * 10001);
     //this.initDoc(fname, id, "fetchdoc", this.settings.plugins[ftype], furl);
@@ -352,7 +368,7 @@ Beacon.prototype.editDoc = function(e) {
     var id = obj.title;
 
     if (this.tabs[id]) {
-        $.jGrowl("You are already editing this document!");
+        BeaconMessage.init("You are already editing this document!");
         // Let's prevent default action and propagation
         if (e.preventDefault) e.preventDefault();
         if (e.stopPropagation) e.stopPropagation();
@@ -367,6 +383,7 @@ Beacon.prototype.editDoc = function(e) {
     $(this.container).tabs("add", container, filename);
     $(container).addClass('BeaconDocumentTab');
     $(this.container).tabs('select', container);
+    
 
     this.showLoading(container, "Please wait while the document is being created...");
 
@@ -405,6 +422,9 @@ Beacon.prototype.editDoc = function(e) {
             this.beacon.pluginManager.initDocument(ooo);
 
             this.beacon.refreshDocumentList();
+            
+            $("#"+id+"ToolsTab").tabs();
+            
         }.attach(attached)
     });
 
@@ -415,7 +435,7 @@ Beacon.prototype.editDoc = function(e) {
     return false;
 };
 
-Beacon.prototype.initDoc = function(filename, id, action, plugin, source) {
+Beacon.prototype.initDoc = function(filename, id, action, plugin, source, alttemplate) {
     container = '#' + filename + id;
 
     $(this.container).tabs("add", container, filename);
@@ -428,7 +448,8 @@ Beacon.prototype.initDoc = function(filename, id, action, plugin, source) {
     var o = {
         plugin: plugin,
         filename: filename,
-        xmlsource: source
+        xmlsource: source,
+        alttemplate: alttemplate
     };
 
     var data = {
@@ -462,6 +483,9 @@ Beacon.prototype.initDoc = function(filename, id, action, plugin, source) {
             this.beacon.pluginManager.initDocument(ooo);
 
             this.beacon.refreshDocumentList();
+            
+            $("#"+obj.payload.id+"ToolsTab").tabs();
+            
         }.attach(attached)
     });
 };
@@ -474,7 +498,7 @@ Beacon.prototype.deleteDoc = function(e) {
     var id = obj.title;
 
     if (this.tabs[id]) {
-        $.jGrowl("You are already editing this document! Close before deleting.");
+        BeaconMessage.init("You are already editing this document! Close before deleting.");
         // Let's prevent default action and propagation
         if (e.preventDefault) e.preventDefault();
         if (e.stopPropagation) e.stopPropagation();
@@ -540,6 +564,46 @@ Beacon.prototype.closeDoc = function(id) {
 
     $(this.container).tabs("remove", selected);
 };
+
+
+var BeaconMessage = {
+  
+  timeout: 1000,
+  
+  init: function(message){
+
+    this.message = message;
+    this.id = "id-"+new Date().getTime();
+    
+    this.build();
+    this.show();
+  },
+  
+  build: function(){
+    this.html = $( "<div title='System Message' id='" + this.id + "'><p>" + this.message + "</p></div>" );
+  },
+  
+  show: function(){
+    $(this.html).dialog({
+      modal: true,
+      open: this.open
+    });
+  },
+  
+  open: function(evt,ui){
+    setTimeout("BeaconMessage.kill('"+this.id+"')",BeaconMessage.timeout);
+  },
+  
+  kill: function(id){
+    $("#"+id).hide(200,function(){
+      $("#"+id).remove();
+      $(this).dialog("destroy");
+    });
+  }
+  
+  
+};
+
 
 /*
  * Beacon Plugin Manager

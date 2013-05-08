@@ -110,6 +110,11 @@ if ($request == '') {
             echo $deletedoc;
             break;
 
+        case "customCommand":
+            $callback = $beacon->customCommand();
+            echo $callback;
+            break;
+
         default:
             echo '<h3>You are not authorized to view this page.';
             exit();

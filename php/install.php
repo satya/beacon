@@ -41,8 +41,6 @@ switch ($beacon_db_instance->init_db($beacon_mysql_hostname,
         break;
 }
 
-$request = json_decode(file_get_contents($beacon_conf_path));
-
 ?>
 
 

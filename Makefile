@@ -29,3 +29,7 @@ install:
 
 clean:
 	@rm -f $(NAME)-$(VERSION).tar.gz
+
+uninstall:
+	@rm -rf $(installdir)/beacon
+	@rm -rf $(httpdconfd)/httpd-beacon.conf

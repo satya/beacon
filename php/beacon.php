@@ -36,8 +36,6 @@ if (!$auth->check_session()) {
     exit();
 } else {
 
-$request = json_decode(file_get_contents($beacon_conf_path));
-
 ?>
 
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
@@ -51,11 +49,11 @@ $request = json_decode(file_get_contents($beacon_conf_path));
 
         <!-- Required by Beacon -->
 
-        <link rel="stylesheet" href="../beacon/css/jquery.jgrowl.css" type="text/css" />
+        <!-- <link rel="stylesheet" href="../beacon/css/jquery.jgrowl.css" type="text/css" /> -->
         <link rel="stylesheet" href="../beacon/css/jquery.tree.css" type="text/css" />
         <!-- Will be loaded by the theme selected in conf file -->
         <link rel="stylesheet" href="../beacon/css/<?php echo $request->theme; ?>/jquery.ui.css" type="text/css" />
-        <link rel="stylesheet" href="../beacon/css/<?php echo $request->theme; ?>/beacon.css" type="text/css" />
+        <link rel="stylesheet" href="../beacon/css/beacon.css" type="text/css" />
 
 </head>
 

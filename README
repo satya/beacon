@@ -16,6 +16,8 @@ INSTALL:
 Linux/Unix systems:
 -------------------
 
+ 0. Run ./configure
+
  1. Do make install as a root user.
 
     # tar -xzf beacon-0.5.tar.gz
@@ -57,7 +59,7 @@ database manually. For this, follow the steps as described below.
 
 
 The database name, user name and password are set as 'beacon' by default
-in beacon/php/settings.php. Your real settings should be reflected in that
+in beacon.conf. Your real settings should be reflected in that
 file too.
 
 

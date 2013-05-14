@@ -13,36 +13,48 @@
                         <span class="ui-icon ui-icon-disk"></span>
                     </a>
                 </li>
+                {customcommands}
             </ul>
         </div>
 
-        <div id="{id}Accordion" class="BeaconAccordion">
-            <!-- Document Tree Display-->
-            <h4><a href="#">Document Tree</a></h4>
-            <div class="BeaconAccordionItem">
-                <div id="{id}BeaconTreeContainer">
-                </div>
-            </div>
+<div id="{id}ToolsTab" class="BeaconTabs">
 
-            <!-- Menu to insert inline elements -->
-            <h4><a href="#">Insert Inline Element</a></h4>
-            <div class="BeaconAccordionItem">
-                <p>Select type:</p>
-                <p>
-                    <select multiple style="width: 100%; height: 100px;" id="{id}InsertInlineList">
-                        <option value="-1">Select Any One</option>
-                    </select>
-                </p>
-                <p><a id="{id}InsertInlineButton" class="BeaconButton ui-corner-all">Insert Inline Element</a></p>
-                <p>
-                    <small>Highlight some text while editing rich text type nodes,
-                    and then choose a type of inline element and click
-                    'Insert Inline Element'.
-                    This will highlight the selected text as that inline element style.</small>
-                </p>
-            </div>
+  <ul>
+      <li><a href="#{id}DocumentTree">Document Tree</a></li>
+      <li><a href="#{id}InlineElements">Insert Inline Elements</a></li>
+  </ul>
 
-        </div>
+  <div class='BeaconTab' id='{id}DocumentTree'>
+  <!-- <div id="{id}Accordion" class="BeaconAccordion"> -->
+      <!-- Document Tree Display-->
+      <h4>Document Tree</h4>
+      <div class="">
+          <div id="{id}BeaconTreeContainer">
+          </div>
+      </div>
+  </div>
+  <div class='BeaconTab' id='{id}InlineElements'>
+    <!-- Menu to insert inline elements -->
+    <h4>Insert Inline Element</h4>
+    <div class="">
+        <p>Select type:</p>
+        <p>
+            <select id="{id}InsertInlineList">
+                <option value="-1">Select Any One</option>
+            </select>
+        </p>
+        <p><a id="{id}InsertInlineButton" class="BeaconButton ui-corner-all">Insert Inline Element</a></p>
+        <p>
+            <small>Highlight some text while editing rich text type nodes,
+            and then choose a type of inline element and click
+            'Insert Inline Element'.
+            This will highlight the selected text as that inline element style.</small>
+        </p>
+    </div>
+  </div>
+</div>
+
+        <!-- </div> -->
     </div>
 
     <div id="{id}Content" class="BeaconContent ui-corner-all">
@@ -73,10 +85,10 @@
         </div>
 
         <div id="{id}RevisionsView">
-            <div id="{id}RevisionContainer" style="float: left; width: 30%;">
+            <div id="{id}RevisionContainer" style="float: left; width: 30%;" class="RevisionContainer">
                 <p>Select a revision to restore to: </p>
                 <p><a id="{id}Restore" class="BeaconButton ui-corner-all">Restore to this revision</a></p>
-                <div id="{id}RevisionList">
+                <div id="{id}RevisionList" class="RevisionList">
                 </div>
             </div>
             <iframe id="{id}RevisionFrame" name="{id}RevisionFrame" class="RevisionFrame" style="float: right; width: 67%; border: none;">

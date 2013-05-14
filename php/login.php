@@ -7,6 +7,7 @@ session_start();
 
 require_once("lib/BeaconAuthenticator.php");
 require_once("lib/BeaconMySQL.php");
+require_once("lib/BeaconLDAP.php");
 require_once ('settings.php');
 
 $beacon_db_instance = NULL;
@@ -29,7 +30,12 @@ if ($beacon_runnable < 0) {
     exit();
 }
 
-$auth = new BeaconAuth($beacon_db_instance);
+if($request->php->authtype==='ldap'){
+  $ldap = new BeaconLDAP($beacon_ldap_configuration);
+  $auth = new BeaconAuth($ldap);
+}elseif($request->php->authtype==='db'){
+  $auth = new BeaconAuth($beacon_db_instance);
+}
 
 if (!$auth->check_session()) {
     if (!isset($_POST['name'])) {
@@ -80,7 +86,7 @@ if (!$auth->check_session()) {
 
 
         /* BEGIN: MySQL Login */
-        if (!$auth->login($username, md5($password))) {
+        if (!$auth->login($username,$password)) {
             @session_destroy();
             echo '<h3>Incorrect Login.</h3>';
             header('Refresh: 1; url=index.php');

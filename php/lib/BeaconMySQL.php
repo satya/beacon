@@ -74,6 +74,12 @@ class BeaconMySQL implements BeaconStorage
 
         $old_src = mysql_result($result, 0, "source");
         $old_html = mysql_result($result, 0, "html");
+        
+        $old_src = mysql_real_escape_string($old_src);
+        $old_html = mysql_real_escape_string($old_html);
+        
+        $source = mysql_real_escape_string($source);
+        $html = mysql_real_escape_string($html);
 
         $result = @mysql_query("UPDATE beacon_documents
                                 SET `source`='$source', `html`='$html'
@@ -151,6 +157,33 @@ class BeaconMySQL implements BeaconStorage
                 $revision['time'] = mysql_result($result, $i, "timestamp");
                 $revision['num'] = mysql_result($result, $i, "num");
                 $arr[$i] = $revision;
+
+                $i++;
+            }
+        }
+
+        return $arr;
+    }
+
+    // Fetch All Documents
+    public function all_documents()
+    {
+        $result = @mysql_query("SELECT * FROM beacon_documents");
+
+        $i = 0;
+        $arr = array();
+
+        if(mysql_num_rows($result) > 0) {
+            while ($i < mysql_num_rows($result)) {
+                $document['id'] = mysql_result($result, $i, "id");
+                $document['name'] = mysql_result($result, $i, "name");
+                $document['username'] = mysql_result($result, $i, "username");
+                $document['source'] = mysql_result($result, $i, "source");
+                $document['html'] = mysql_result($result, $i, "html");
+                $document['created'] = mysql_result($result, $i, "created");
+                $document['plugin'] = mysql_result($result, $i, "plugin");
+
+                $arr[$i] = $document;
 
                 $i++;
             }
@@ -263,6 +296,8 @@ class BeaconMySQL implements BeaconStorage
 
     public function validate_user($username, $password)
     {
+        $password = md5($password);
+      
         $username = stripslashes($username);
         $password = stripslashes($password);
         $username = mysql_real_escape_string($username);

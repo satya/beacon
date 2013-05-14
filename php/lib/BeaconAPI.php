@@ -28,16 +28,54 @@ class BeaconAPI
         $html = str_replace("{imgpath}", $this->settings->url . $this->settings->php->imagepath, $html);
 
         $html = str_replace("{previousdocs}", $this->getdoclist(), $html);
+        
+        $html = str_replace("{alttemplates}", $this->gettemplates(), $html);
 
         // Return
         return $html;
     }
 
+    /**
+     * returns a select list of templates for each xml plugin by filename and path
+     * 
+     */ 
+    function gettemplates() {
+        $text = "";
+        
+        if($handle = opendir($this->fullPath . 'beacon/plugins/')){
+            while(false !== ($entry = readdir($handle))){
+                if($entry!=='.' && $entry!=='..' && $handle2 = opendir($this->fullPath . 'beacon/plugins/' . $entry . '/xml')){
+                  
+                  $text .= "<select id='$entry-template'>";
+                  
+                    while(false !== ($entry2 = readdir($handle2))){
+                        $path_parts = pathinfo($entry2);
+                        if($path_parts['extension']==='xml'){
+                            //error_log($entry . ' - ' . $entry2);
+                            $text .= "<option value='$entry2'>$entry2</option>";
+                        }
+                    }
+                    
+                  $text .= "</select>";
+                  
+                }
+            }
+            closedir($handle);
+        }
+      
+        return $text;
+      
+    }
+
     function getdoclist() {
         $text = "";
         $i = 0;
-
-        $documents = $this->db->user_documents($_SESSION['auth_username']);
+        
+        if($this->settings->sharedDocuments===TRUE || $this->settings->sharedDocuments==="TRUE"){
+          $documents = $this->db->all_documents();
+        }else{
+          $documents = $this->db->user_documents($_SESSION['auth_username']);
+        }
 
         while ($i < count($documents)) {
             $text .= '<tr style="padding: 9px">';
@@ -57,7 +95,8 @@ class BeaconAPI
         $plugin = $this->request->payload->plugin;
         $filename = $this->request->payload->filename;
         $xmlsource = $this->request->payload->xmlsource;
-
+        $alttemplate = $this->request->payload->alttemplate;
+        
         // Get the plugin Object
         $plugin_object = include($this->pluginpath . $plugin . "/php/" . $plugin . ".php");
 
@@ -65,6 +104,10 @@ class BeaconAPI
         $beacon->path = $this->pluginpath . $plugin . "/";
         $beacon->url = $this->settings->url . $this->settings->php->pluginpath . $plugin . "/";
         $beacon->parser = new BeaconXSLTransformer();
+
+        if($alttemplate){
+          $xmlsource = file_get_contents($beacon->path . 'xml/' . $alttemplate);
+        }
 
         // Get the HTML
         $html = $plugin_object->newdoc($beacon, $xmlsource);
@@ -87,6 +130,7 @@ class BeaconAPI
         $ui = str_replace("{id}", $id, $ui);
         $ui = str_replace("{src}", $url, $ui);
         $ui = str_replace("{imgpath}", $this->settings->url . $this->settings->php->imagepath, $ui);
+        $ui = str_replace("{customcommands}",$this->customCommands(),$ui);
 
         // Build the object
         $response['result'] = "success";
@@ -95,6 +139,59 @@ class BeaconAPI
 
         // Send JSON of the object
         return json_encode($response);
+    }
+
+    function customCommands() {
+     
+      $id = $this->request->payload->id;
+     
+      $html = "";
+      
+      foreach($this->settings->customCommands as $customCommandId => $customCommand){
+        if(intval($customCommand->enabled)===1){
+          $html .= "<li class='ui-state-default ui-corner-all BeaconCustomCommand'>\n";
+          $html .= "<a id='" . $id . $customCommandId . "' href='#' title='" . $customCommand->name . "'>";
+          $html .= "<span class='ui-icon ui-icon-" . $customCommand->icon . "'></span>";
+          $html .= "</a>\n";
+          $html .= "</li>\n\n";
+        }
+      }
+      
+      return $html;
+      
+    }
+
+    function customCommand() {
+        $id = $this->request->payload->id;
+        $customCommandId = $this->request->payload->customCommandId;
+        $userArguments = implode(" ",$this->request->payload->arguments);
+        $customCommand = $this->settings->customCommands->{$customCommandId}->command;
+        
+        $tempXML = '/tmp/beacon-temp-file.xml';
+        
+        // dumping this document to a temporary XML file
+        $obj = $this->db->fetch_document($id);
+        $source = $obj['source'];
+        file_put_contents($tempXML,$source);
+        
+        $arguments = $tempXML . ' ' . $userArguments;
+        $commandString = $customCommand . ' ' . $arguments;
+        
+        $out = array();
+        $status = -1;
+
+        exec($commandString, $out, $status);
+
+        if($status!=0) {
+            // shell script indicated an error return
+            return "ERROR " . $status . " with command '" . $commandString . "', id = " . $customCommandId;
+        }
+        
+        $returnVal = implode("\r\n",$out);
+        //error_log($returnVal);
+        
+        return $returnVal;
+        
     }
 
     function editdoc() {
@@ -111,6 +208,7 @@ class BeaconAPI
         $ui = str_replace("{id}", $id, $ui);
         $ui = str_replace("{src}", $url, $ui);
         $ui = str_replace("{imgpath}", $this->settings->url . $this->settings->php->imagepath, $ui);
+        $ui = str_replace("{customcommands}",$this->customCommands(),$ui);
 
         // Build the object
         $response['result'] = "success";
@@ -208,7 +306,7 @@ class BeaconAPI
             error_log("Save document done.", 1, "/var/log/feeds-reader/log");
             return "DONE";
         } else {
-            error_log("could not sve document", 3, "/var/log/feeds-reader/log");
+            error_log("could not save document", 3, "/var/log/feeds-reader/log");
             return "FAIL";
         }
     }

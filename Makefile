@@ -28,7 +28,7 @@ install:
 	@cp -p httpd-beacon.conf $(httpdconfd)/httpd-beacon.conf
 
 clean:
-	@rm -f $(NAME)-$(VERSION).tar.gz
+	@rm -f httpd-beacon.conf $(NAME)-$(VERSION).tar.gz
 
 uninstall:
 	@rm -rf $(installdir)/beacon

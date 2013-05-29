@@ -303,10 +303,10 @@ class BeaconAPI
 
         if ($source) {
             $result = $this->db->save_document($id, $html, $source, date('Y-m-d h:i:s'));
-            error_log("Save document done.", 1, "/var/log/feeds-reader/log");
+            error_log("Save document done.\n", 3, "/var/log/beacon.log");
             return "DONE";
         } else {
-            error_log("could not save document", 3, "/var/log/feeds-reader/log");
+            error_log("could not save document.\n", 3, "/var/log/beacon.log");
             return "FAIL";
         }
     }

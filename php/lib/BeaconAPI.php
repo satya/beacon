@@ -28,7 +28,7 @@ class BeaconAPI
         $html = str_replace("{imgpath}", $this->settings->url . $this->settings->php->imagepath, $html);
 
         $html = str_replace("{previousdocs}", $this->getdoclist(), $html);
-        
+
         $html = str_replace("{alttemplates}", $this->gettemplates(), $html);
 
         // Return
@@ -37,17 +37,17 @@ class BeaconAPI
 
     /**
      * returns a select list of templates for each xml plugin by filename and path
-     * 
-     */ 
+     *
+     */
     function gettemplates() {
         $text = "";
-        
+
         if($handle = opendir($this->fullPath . 'beacon/plugins/')){
             while(false !== ($entry = readdir($handle))){
                 if($entry!=='.' && $entry!=='..' && $handle2 = opendir($this->fullPath . 'beacon/plugins/' . $entry . '/xml')){
-                  
+
                   $text .= "<select id='$entry-template'>";
-                  
+
                     while(false !== ($entry2 = readdir($handle2))){
                         $path_parts = pathinfo($entry2);
                         if($path_parts['extension']==='xml'){
@@ -55,22 +55,22 @@ class BeaconAPI
                             $text .= "<option value='$entry2'>$entry2</option>";
                         }
                     }
-                    
+
                   $text .= "</select>";
-                  
+
                 }
             }
             closedir($handle);
         }
-      
+
         return $text;
-      
+
     }
 
     function getdoclist() {
         $text = "";
         $i = 0;
-        
+
         if($this->settings->sharedDocuments===TRUE || $this->settings->sharedDocuments==="TRUE"){
           $documents = $this->db->all_documents();
         }else{
@@ -96,7 +96,7 @@ class BeaconAPI
         $filename = $this->request->payload->filename;
         $xmlsource = $this->request->payload->xmlsource;
         $alttemplate = $this->request->payload->alttemplate;
-        
+
         // Get the plugin Object
         $plugin_object = include($this->pluginpath . $plugin . "/php/" . $plugin . ".php");
 
@@ -142,11 +142,11 @@ class BeaconAPI
     }
 
     function customCommands() {
-     
+
       $id = $this->request->payload->id;
-     
+
       $html = "";
-      
+
       foreach($this->settings->customCommands as $customCommandId => $customCommand){
         if(intval($customCommand->enabled)===1){
           $html .= "<li class='ui-state-default ui-corner-all BeaconCustomCommand'>\n";
@@ -156,9 +156,9 @@ class BeaconAPI
           $html .= "</li>\n\n";
         }
       }
-      
+
       return $html;
-      
+
     }
 
     function customCommand() {
@@ -166,17 +166,17 @@ class BeaconAPI
         $customCommandId = $this->request->payload->customCommandId;
         $userArguments = implode(" ",$this->request->payload->arguments);
         $customCommand = $this->settings->customCommands->{$customCommandId}->command;
-        
+
         $tempXML = '/tmp/beacon-temp-file.xml';
-        
+
         // dumping this document to a temporary XML file
         $obj = $this->db->fetch_document($id);
         $source = $obj['source'];
         file_put_contents($tempXML,$source);
-        
+
         $arguments = $tempXML . ' ' . $userArguments;
         $commandString = $customCommand . ' ' . $arguments;
-        
+
         $out = array();
         $status = -1;
 
@@ -186,12 +186,12 @@ class BeaconAPI
             // shell script indicated an error return
             return "ERROR " . $status . " with command '" . $commandString . "', id = " . $customCommandId;
         }
-        
+
         $returnVal = implode("\r\n",$out);
         //error_log($returnVal);
-        
+
         return $returnVal;
-        
+
     }
 
     function editdoc() {
